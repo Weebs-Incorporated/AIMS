@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# package managers
+package-lock.json
+yarn.lock
+.yarn-integrity
+
+# user generated
+build/
+*.log
+config.json
