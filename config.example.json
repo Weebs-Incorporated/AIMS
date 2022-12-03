@@ -1,6 +1,6 @@
 {
+    "$schema": "./.github/config-schema.json",
     "port": 5000,
-    "rateLimitBypassTokens": [],
     "jwtSecret": "super_secret_string",
     "mongoURI": "mongodb+srv://..."
 }

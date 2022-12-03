@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "Links to the JSON schema (the thing generating these descriptions), don't change this!"
+        },
+        "port": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 5000,
+            "description": "Port the application should run on."
+        },
+        "clientUrls": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": ["http://localhost:5000"],
+            "description": "Client origin URLs for server to use in CORS middleware.\nIn other words, requests from these websites will work on their end instead of giving a security error."
+        },
+        "numProxies": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Number of proxies (eg. Cloudflare, AWS ELB, NGINX) between client and server. Used for rate limiting functionality.\n For more info see https://www.npmjs.com/package/express-rate-limit#:~:text=Troubleshooting%20Proxy%20Issues"
+        },
+        "maxRequestsPerMinute": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 30,
+            "description": "Maximum number of requests a client can make to the API in a 1 minute window.\nRemember that requests with a valid \"RateLimit-Bypass-Token\" header will ignore this."
+        },
+        "rateLimitBypassTokens": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "description": "Requests with any of these in their \"RateLimit-Bypass-Token\" header will bypass rate limiting."
+        },
+        "mongoURI": {
+            "type": "string",
+            "examples": ["mongodb+srv://..."],
+            "description": "URI to connected to a MongoDB database with."
+        },
+        "usernameValidator": {
+            "type": "string",
+            "default": "^[a-zA-Z0-9!$&*()[\\]{}<>\\-+_.=\";:,|~`^]{2,32}$",
+            "description": "Validation RegExp for usernames."
+        },
+        "jwtSecret": {
+            "type": "string",
+            "minLength": 8,
+            "examples": ["super_secret_string"],
+            "description": "String to sign JSON Web Tokens with, should not be easy to guess."
+        },
+        "jwtDuration": {
+            "type": ["string", "number"],
+            "examples": ["7d", "2 days", "10h"],
+            "default": "7d",
+            "description": "How long sessions should last for before needing a refresh.\nExpressed in seconds or a string describing a time span (zeit/ms)."
+        }
+    },
+    "additionalProperties": false,
+    "required": ["mongoURI"]
+}
