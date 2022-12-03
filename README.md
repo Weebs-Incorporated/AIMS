@@ -1,6 +1,6 @@
 # Anime Image Management Service
 
-![image](./.github/AIMS.png)
+![image](./.github/docs/AIMS.png)
 
 An API for uploading, moderating, and searching (mostly) anime-style images.
 
@@ -28,7 +28,9 @@ cp config.example.json config.json
 
 You now need to enter some information such as the JWT secret and Mongo URI.
 
-Documentation for all the values can be found [here](src/config.ts).
+A schema for all the values can be found [here](.github/config-schema.json), the only required value is a Mongo URI.
+
+Don't know how to get a Mongo URI? See the [Mongo DB setup guide](./.github/docs/MongoDBGuide.md).
 
 Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 
