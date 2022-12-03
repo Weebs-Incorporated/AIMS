@@ -43,6 +43,18 @@ Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 -   `test` Runs testing using Jest.
 -   `check-all` Does linting, typechecking, and testing.
 
+## Production Build
+
+Remember to set the `NODE_ENV` environment variable to `production` if you want to start the API in production mode.
+
+```sh
+# Linux & Mac
+export NODE_ENV=production
+
+# Windows
+$env:NODE_ENV = 'production'
+```
+
 # Dependency Reference
 
 -   `axios` Makes web requests easy.
