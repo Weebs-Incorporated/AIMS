@@ -1,5 +1,7 @@
 # Anime Image Management Service
 
+![image](./.github/AIMS.png)
+
 An API for uploading, moderating, and searching (mostly) anime-style images.
 
 # Installation
