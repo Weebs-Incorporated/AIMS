@@ -18,6 +18,14 @@ describe('corsMiddleware', () => {
 
             expect(response.statusCode).toBe(200);
         });
+
+        it('has the same Access-Control-Allow-Origin header', async () => {
+            const response1 = await app.get('/').set('origin', 'https://example.com').send();
+            const response2 = await app.get('/').set('origin', 'https://google.com').send();
+
+            expect(response1.headers['access-control-allow-origin']).toBe('*');
+            expect(response2.headers['access-control-allow-origin']).toBe('*');
+        });
     });
 
     describe('static whitelist', () => {
