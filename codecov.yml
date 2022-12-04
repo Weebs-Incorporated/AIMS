@@ -7,4 +7,3 @@ coverage:
         base: auto 
         flags: 
           - unit
-        paths: 
