@@ -6,10 +6,10 @@ name: Node.js CI
 on:
   push:
     branches:
-      - code_cov_badge
+      - main
   pull_request:
     branches:
-      - code_cov_badge
+      - main
 
 jobs:
   build:
