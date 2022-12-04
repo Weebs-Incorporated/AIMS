@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1 id="rtt">RTT: 5ms</h1>
+        <p id="to">To Server: 11ms</p>
+        <p id="from">From Server: 10ms</p>
+        <script>
+            const rtt = document.getElementById('rtt');
+            const to = document.getElementById('to');
+            const from = document.getElementById('from');
+
+            async function getPing() {
+                const sentAt = Date.now();
+                const req = await (await fetch('http://localhost:5000')).json();
+                const serverReceivedAt = new Date(req.receivedRequest).getTime();
+                const clientReceivedAt = Date.now();
+
+                rtt.innerText = `RTT: ${clientReceivedAt - sentAt}ms`;
+                to.innerText = `To Server: ${serverReceivedAt - sentAt}ms`;
+                from.innerText = `From Server: ${clientReceivedAt - serverReceivedAt}ms`;
+            }
+
+            setInterval(getPing, 2000);
+        </script>
+    </body>
+</html>
