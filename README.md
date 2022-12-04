@@ -1,4 +1,4 @@
-# Anime Image Management Service
+# Anime Image Management Service [![CodeQL](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/codeql-analysis.yml)[![Node.js CI](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/node.js.ci.yml/badge.svg)](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/node.js.ci.yml)
 
 ![image](./.github/docs/AIMS.png)
 
