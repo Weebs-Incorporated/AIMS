@@ -1,0 +1,10 @@
+coverage:
+  status:
+    project:
+      default:
+        # basic
+        threshold: 0%
+        base: auto 
+        flags: 
+          - unit
+        paths: 
