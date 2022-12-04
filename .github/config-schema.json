@@ -16,8 +16,9 @@
             "items": {
                 "type": "string"
             },
-            "default": ["http://localhost:5000"],
-            "description": "Client origin URLs for server to use in CORS middleware.\nIn other words, requests from these websites will work on their end instead of giving a security error."
+            "examples": [["http://localhost:5000"]],
+            "default": [],
+            "description": "Client origin URLs for server to use in CORS middleware.\nIn other words, requests from these websites will work on their end instead of giving a security error.\nAn empty array is equivalent to the wildcard \"*\", meaning any website."
         },
         "numProxies": {
             "type": "integer",
