@@ -1,7 +1,26 @@
 import express from 'express';
+import Config from './config';
+import corsMiddleware from './middleware/corsMiddleware';
+import rateLimitingMiddleware from './middleware/rateLimitingMiddleware';
 
-const app = express();
+export default function createApp(config: Config) {
+    const app = express();
 
-app.get('/', (_req, res) => res.sendStatus(200));
+    app.set('trust proxy', config.numProxies);
 
-export default app;
+    // applying middleware
+    app.use(express.json());
+    app.use(corsMiddleware(config));
+    app.use(rateLimitingMiddleware(config));
+
+    // setting up routes
+    app.get('/', (_req, res) =>
+        res.status(200).json({
+            startTime: config.startedAt,
+            version: config.version,
+            receivedRequest: new Date().toISOString(),
+        }),
+    );
+
+    return app;
+}
