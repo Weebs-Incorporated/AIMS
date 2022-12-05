@@ -4,7 +4,7 @@ coverage:
       default:
         # basic
         threshold: 0%
-        base: auto 
-        flags: 
+        base: auto
+        flags:
           - unit
 comment: false
