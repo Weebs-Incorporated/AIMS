@@ -7,8 +7,9 @@ import rateLimitingMiddleware from './middleware/rateLimitingMiddleware';
 import apiSpec from '../openapi.json';
 import validatorErrorHandler from './middleware/validatorErrorHandler';
 import validatorMiddleware from './middleware/validatorMiddleware';
+import mongoose from 'mongoose';
 
-export default function createApp(config: Config) {
+export default async function createApp(config: Config) {
     const app = express();
 
     app.set('trust proxy', config.numProxies);
@@ -31,6 +32,12 @@ export default function createApp(config: Config) {
             receivedRequest: new Date().toISOString(),
         }),
     );
+
+    // connecting to MongoDB
+    if (config.mongoURI !== 'test mongo URI') {
+        await mongoose.connect(config.mongoURI, { dbName: config.mongoDbName });
+        console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
+    }
 
     return app;
 }
