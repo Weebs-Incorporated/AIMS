@@ -8,6 +8,7 @@ export default interface Config {
     maxRequestsPerMinute: number;
     rateLimitBypassTokens: string[];
     mongoURI: string;
+    mongoDbName: string;
     usernameValidator: RegExp;
     jwtSecret: string;
     jwtDuration: string | number;
@@ -37,6 +38,7 @@ export const defaultConfig: Omit<Config, 'mongoURI'> = {
     numProxies: 0,
     maxRequestsPerMinute: 30,
     rateLimitBypassTokens: [],
+    mongoDbName: 'AIMS_default',
     usernameValidator: new RegExp(/^[a-zA-Z0-9!$&*()[\\]{}<>\\-+_.=";:,|~`^]{2,32}$/),
     jwtSecret: randomBytes(8).toString('hex'),
     jwtDuration: '7d',

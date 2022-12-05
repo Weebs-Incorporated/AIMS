@@ -45,6 +45,11 @@
             "examples": ["mongodb+srv://..."],
             "description": "URI to connected to a MongoDB database with."
         },
+        "mongoDbName": {
+            "type": "string",
+            "default": "AIMS_default",
+            "description": "Name of the database in MongoDB, will be created if it does not yet exist."
+        },
         "usernameValidator": {
             "type": "string",
             "default": "^[a-zA-Z0-9!$&*()[\\]{}<>\\-+_.=\";:,|~`^]{2,32}$",
