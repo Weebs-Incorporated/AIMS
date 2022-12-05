@@ -49,18 +49,12 @@ export function mockConfig(config?: Partial<Config>): Config {
     return { ...defaultConfig, ...config, mongoURI: 'test mongo URI' };
 }
 
-/** Creates a config object from `config.json` (or `config.example.json`), using the {@link DefaultConfig} values as
+/** Creates a config object from `config.json`, using the {@link DefaultConfig} values as
  * fallback. */
 export function getConfig(): Config {
-    /**
-     * Config that we will take values from when forming the final globally-used {@link Config} object.
-     *
-     * Although having a `config.json` file is recommended, it is not necessary since this will fallback to
-     * `config.example.json`.
-     */
-    const partialConfig: ImportedConfig = existsSync('config.json')
-        ? require('../config.json')
-        : require('../config.example.json');
+    /** Config that we will take values from when forming the final globally-used {@link Config} object. */
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const partialConfig: ImportedConfig = require('../config.json');
 
     if (partialConfig.jwtSecret === undefined) {
         console.log('Warning: No jwtSecret defined in config, sessions will not persist between resets!');
