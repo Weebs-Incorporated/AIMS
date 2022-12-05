@@ -5,7 +5,7 @@ import { mockConfig } from '../config';
 describe('rateLimitingMiddleware', () => {
     it('rate limits according to config', async () => {
         const config = mockConfig({ maxRequestsPerMinute: 2 });
-        const app = supertest(createApp(config));
+        const app = supertest(await createApp(config));
 
         const response1 = await app.get('/').send();
         const response2 = await app.get('/').send();
@@ -18,7 +18,7 @@ describe('rateLimitingMiddleware', () => {
 
     it('accepts valid RateLimit-Bypass-Token headers', async () => {
         const config = mockConfig({ maxRequestsPerMinute: 1, rateLimitBypassTokens: ['someBypassToken'] });
-        const app = supertest(createApp(config));
+        const app = supertest(await createApp(config));
 
         await app.get('/').send();
 
@@ -34,7 +34,7 @@ describe('rateLimitingMiddleware', () => {
 
     it('gives feedback for invalid RateLimit-Bypass-Token headers', async () => {
         const config = mockConfig({ maxRequestsPerMinute: 1, rateLimitBypassTokens: ['someBypassToken'] });
-        const app = supertest(createApp(config));
+        const app = supertest(await createApp(config));
 
         await app.get('/').send();
 
