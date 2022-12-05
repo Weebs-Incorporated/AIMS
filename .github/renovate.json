@@ -8,5 +8,6 @@
             "matchPackagePatterns": ["eslint"],
             "groupName": "eslint packages"
         }
-    ]
+    ],
+    "prConcurrentLimit": 4
 }
