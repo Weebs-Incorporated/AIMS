@@ -30,7 +30,7 @@
         "image-size": "^1.0.2",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^6.7.5",
-        "swagger-ui-express": "^4.5.0"
+        "swagger-ui-express": "^4.6.0"
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.0",
