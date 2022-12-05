@@ -9,6 +9,10 @@ on:
     branches:
       - main
 
+env:
+  mongoDbName: ${{ secrets.MONGODB_DB_NAME }}
+  mongoURI: ${{ secrets.MONGODB_URI }}
+
 jobs:
   build:
     name: CI
