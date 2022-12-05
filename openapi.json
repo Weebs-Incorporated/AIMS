@@ -1,0 +1,103 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "AIMS",
+        "description": "Anime Image Management Service",
+        "contact": {
+            "name": "API Support",
+            "url": "https://github.com/Weebs-Incorporated/AIMS"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/Weebs-Incorporated/AIMS/blob/main/LICENSE"
+        },
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:{port}",
+            "description": "Development (Local)",
+            "variables": {
+                "port": {
+                    "default": "5000"
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": ["Other"],
+                "description": "Returns API information.",
+                "responses": {
+                    "200": {
+                        "description": "Version, start time, and request received time.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["startTime", "version", "receivedRequest"],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "startTime": {
+                                            "$ref": "#/components/schemas/ISOString"
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "example": "12.34.56"
+                                        },
+                                        "receivedRequest": {
+                                            "$ref": "#/components/schemas/ISOString"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/spec": {
+            "get": {
+                "tags": ["Other"],
+                "description": "Returns underlying API spec.",
+                "responses": {
+                    "200": {
+                        "description": "API spec in JSON form.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-docs": {
+            "get": {
+                "tags": ["Other"],
+                "responses": {
+                    "200": {
+                        "description": "This document."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ISOString": {
+                "type": "string",
+                "example": "2022-11-08T02:20:08.190Z"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Other",
+            "description": "Miscellaneous operations."
+        }
+    ]
+}
