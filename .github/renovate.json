@@ -1,13 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "rangeStrategy": "bump",
+    "extends": ["config:base"],
     "dependencyDashboard": false,
-    "ignorePaths": ["**/node_modules/**"],
-    "packageRules": [
-        {
-            "matchPackagePatterns": ["eslint"],
-            "groupName": "eslint packages"
-        }
-    ],
-    "prConcurrentLimit": 4
+    "labels": ["dependencies"]
 }
