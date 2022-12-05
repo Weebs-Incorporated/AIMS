@@ -63,14 +63,7 @@
                 "description": "Returns underlying API spec.",
                 "responses": {
                     "200": {
-                        "description": "API spec in JSON form.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "API spec in JSON form."
                     }
                 }
             }
