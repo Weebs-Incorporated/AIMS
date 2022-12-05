@@ -48,8 +48,28 @@ export const defaultConfig: Omit<Config, 'mongoURI'> = {
 };
 
 /** Makes a new config object for running tests with. */
-export function mockConfig(config?: Partial<Config>): Config {
-    return { ...defaultConfig, ...config, mongoURI: 'test mongo URI' };
+export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config {
+    let mongoDbName = defaultConfig.mongoDbName;
+    let mongoURI = 'test mongo URI';
+
+    if (config?.useEnv) {
+        if (process.env['mongoDbName']) {
+            mongoDbName = process.env['mongoDbName'];
+        } else {
+            console.log('No mongoDbName found in process.env!');
+            process.exit(1);
+        }
+
+        if (process.env['mongoURI']) {
+            mongoURI = process.env['mongoURI'];
+        } else {
+            console.log('No mongoURI found in process.env!');
+            process.exit(1);
+        }
+
+        delete config.useEnv;
+    }
+    return { ...defaultConfig, ...config, mongoDbName, mongoURI };
 }
 
 /** Creates a config object from `config.json`, using the {@link DefaultConfig} values as
