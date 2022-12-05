@@ -11,6 +11,8 @@ export default interface Config {
     usernameValidator: RegExp;
     jwtSecret: string;
     jwtDuration: string | number;
+
+    // the following values are not defined in `config.json` and are automatically made
     version: string;
     startedAt: string;
 }
