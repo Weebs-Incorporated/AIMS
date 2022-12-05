@@ -1,5 +1,4 @@
 import { randomBytes } from 'crypto';
-import { existsSync } from 'fs';
 
 /** Shape of exported config that will be used throughout the app. */
 export default interface Config {
