@@ -17,17 +17,9 @@ You can easily get pnpm using:
 npm i -g pnpm
 ```
 
-This API uses [MongoDB](https://www.mongodb.com/) for storing data, and [Google OAuth](https://developers.google.com/identity/gsi/web/guides/overview) for logging in. This means you will need to set up:
+First will need to set up a MongoDB cluster, and provide a connection URI for it (`mongodb+srv://...`). If you aren't sure how to do this, see the [setting up MongoDB](./.github/docs/MongoDBGuide.md) guide.
 
--   A MongoDB cluster, and provide a connection URI for it (`mongodb+srv://...`).
--   A Google OAuth 2.0 client, and provide it's client secret.
-
-If you aren't sure how to get these, see the personalised guides:
-
--   [Setting up MongoDB](./.github/docs/MongoDBGuide.md)
--   [Setting up Google OAuth](./.github/docs/GoogleOAuthGuide.md)
-
-Now you can set up the repository from a terminal:
+Next you can set up the repository from a terminal:
 
 ```sh
 git clone https://github.com/Weebs-Incorporated/AIMS.git AIMS
@@ -36,9 +28,9 @@ pnpm install
 cp config.example.json config.json
 ```
 
-Now enter your Mongo URI and Google client secret into the [config.json](./config.json) file you just created. There are a lot of other configuration options you can give to the API, a JSON schema for all the values can be found [here](.github/config-schema.json).
+Finally enter your Mongo URI and Google client secret into the [config.json](./config.json) file you just created. There are a lot of other configuration options you can give to the API, a JSON schema for all the values can be found [here](.github/config-schema.json).
 
-Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
+All done! You can now run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 
 # Script Reference
 
@@ -48,18 +40,6 @@ Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 -   `typecheck` Makes sure there are no type errors in the code.
 -   `test` Runs testing using Jest.
 -   `check-all` Does linting, typechecking, and testing.
-
-## Production Build
-
-Remember to set the `NODE_ENV` environment variable to `production` if you want to start the API in production mode.
-
-```sh
-# Linux & Mac
-export NODE_ENV=production
-
-# Windows
-$env:NODE_ENV = 'production'
-```
 
 # Dependency Reference
 
@@ -73,3 +53,23 @@ $env:NODE_ENV = 'production'
 -   `jsonwebtoken` Helps with user authorization.
 -   `mongoose` Helps with MongoDB database interactions.
 -   `swagger-ui-express` Framework for API documentation.
+
+# Production Build
+
+Remember to set the `NODE_ENV` environment variable to `production` if you want to start the API in production mode.
+
+```sh
+# Linux & Mac
+export NODE_ENV=production
+
+# Windows
+$env:NODE_ENV = 'production'
+```
+
+# Additional Setup
+
+-   You can supply a Google OAuth Client ID to enable the `/login/google` endpoint, allowing users to register and log in via Google
+
+    -   For more info see [setting up Google OAuth](./.github/docs/GoogleOAuthGuide.md).
+
+-   Discord OAuth setup: _coming soon_.

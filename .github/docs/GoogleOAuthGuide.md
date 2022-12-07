@@ -12,8 +12,19 @@ The **JavaScript origins** are the websites that are allowed to show the "sign i
 
 The **Authorised redirect URIs** are the URIs that the button can redirect the user to after they sign in.
 
-You will also need to set up the OAuth consent screen, however the only fields you _need_ to fill out are the app name, user support email, and the developer contact information.
+You will also need to set up the OAuth consent screen, the only fields you _need_ to fill out are:
 
-Now, using the [VSCode live server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) you can navigate to the [googleLogin.html](../templates/googleLogin.html) file and log in!
+-   App name.
+-   User support email.
+-   Test users.
+-   Developer contact information.
 
-Note that in this example, the live server was running on port 5001 (hence the `http://localhost:5001` in authorised JavaScript origins).
+Make sure the email you will be using for testing is in the **test users** table as well:
+
+![image](../images/Google_2.png)
+
+There are now 2 ways you can login with google:
+
+1. Using the [VSCode live server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) you can navigate to the [googleLogin.html](../../static/googleLogin.html) file.
+
+2. Running the API and navigating to [http://localhost:PORT/static/googleLogin.html](http://localhost:5000/static/googleLogin.html), where `PORT` is the port in [config.json](../../config.json) (default 5000).
