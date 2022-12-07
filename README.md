@@ -17,6 +17,16 @@ You can easily get pnpm using:
 npm i -g pnpm
 ```
 
+This API uses [MongoDB](https://www.mongodb.com/) for storing data, and [Google OAuth](https://developers.google.com/identity/gsi/web/guides/overview) for logging in. This means you will need to set up:
+
+-   A MongoDB cluster, and provide a connection URI for it (`mongodb+srv://...`).
+-   A Google OAuth 2.0 client, and provide it's client secret.
+
+If you aren't sure how to get these, see the personalised guides:
+
+-   [Setting up MongoDB](./.github/docs/MongoDBGuide.md)
+-   [Setting up Google OAuth](./.github/docs/GoogleOAuthGuide.md)
+
 Now you can set up the repository from a terminal:
 
 ```sh
@@ -26,11 +36,7 @@ pnpm install
 cp config.example.json config.json
 ```
 
-You now need to enter some information such as the JWT secret and Mongo URI.
-
-A schema for all the values can be found [here](.github/config-schema.json), the only required value is a Mongo URI.
-
-Don't know how to get a Mongo URI? See the [Mongo DB setup guide](./.github/docs/MongoDBGuide.md).
+Now enter your Mongo URI and Google client secret into the [config.json](./config.json) file you just created. There are a lot of other configuration options you can give to the API, a JSON schema for all the values can be found [here](.github/config-schema.json).
 
 Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 
