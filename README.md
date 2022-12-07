@@ -1,6 +1,6 @@
 # Anime Image Management Service [![CodeQL](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/codeql-analysis.yml)[![Node.js CI](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/node.js.ci.yml/badge.svg)](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/node.js.ci.yml)[![codecov](https://codecov.io/github/Weebs-Incorporated/AIMS/branch/main/graph/badge.svg?token=IQCUNAQLW4)](https://codecov.io/github/Weebs-Incorporated/AIMS)
 
-![image](./.github/docs/AIMS.png)
+![image](./.github/images/AIMS.png)
 
 An API for uploading, moderating, and searching (mostly) anime-style images.
 
