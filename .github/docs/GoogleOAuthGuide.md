@@ -16,8 +16,8 @@ You will also need to set up the OAuth consent screen, the only fields you _need
 
 -   App name.
 -   User support email.
--   Test users.
 -   Developer contact information.
+-   Test users.
 
 Make sure the email you will be using for testing is in the **test users** table as well:
 
