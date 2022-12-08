@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { randomBytes } from 'crypto';
 import { existsSync, readFileSync } from 'fs';
 
@@ -43,7 +44,7 @@ export const defaultConfig: Omit<Config, 'mongoURI'> = {
     usernameValidator: new RegExp(/^[a-zA-Z0-9!$&*()[\\]{}<>\\-+_.=";:,|~`^]{2,32}$/),
     jwtSecret: randomBytes(8).toString('hex'),
     jwtDuration: '7d',
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // automatic values
     version: process.env.NPM_VERSION || require('../../package.json').version,
     startedAt: new Date().toISOString(),
 };
@@ -63,7 +64,6 @@ export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config
     let mongoURI = 'test mongo URI';
 
     if (config?.useEnv) {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const fromFile = existsSync('config.json') ? (require('../../config.json') as ImportedConfig) : false;
 
         if (fromFile !== false) {
