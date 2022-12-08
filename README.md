@@ -68,8 +68,4 @@ $env:NODE_ENV = 'production'
 
 # Additional Setup
 
--   You can supply a Google OAuth Client ID to enable the `/login/google` endpoint, allowing users to register and log in via Google
-
-    -   For more info see [setting up Google OAuth](./.github/docs/GoogleOAuthGuide.md).
-
 -   Discord OAuth setup: _coming soon_.
