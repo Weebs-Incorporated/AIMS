@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto';
+import { existsSync } from 'fs';
 
 /** Shape of exported config that will be used throughout the app. */
 export default interface Config {
@@ -47,28 +48,44 @@ export const defaultConfig: Omit<Config, 'mongoURI'> = {
     startedAt: new Date().toISOString(),
 };
 
-/** Makes a new config object for running tests with. */
+/**
+ * Makes a new config object for running tests with.
+ *
+ * If `useEnv` is specified in the partial input config, will attempt to override the default `mongoURI` and
+ * `mongoDbName` values with those from `config.json` (if it exists) or `process.env.mongoURI` and
+ * `process.env.mongoDbName`.
+ *
+ * If `config.json` does not exist and `process.env.mongoURI` is missing, will
+ * exit the process with status 1.
+ */
 export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config {
     let mongoDbName = defaultConfig.mongoDbName;
     let mongoURI = 'test mongo URI';
 
     if (config?.useEnv) {
-        if (process.env['mongoDbName']) {
-            mongoDbName = process.env['mongoDbName'];
-        } else {
-            console.log('No mongoDbName found in process.env!');
-            process.exit(1);
-        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const fromFile = existsSync('config.json') ? (require('../config.json') as ImportedConfig) : false;
 
-        if (process.env['mongoURI']) {
-            mongoURI = process.env['mongoURI'];
+        if (fromFile !== false) {
+            mongoURI = fromFile.mongoURI;
+            mongoDbName = fromFile.mongoDbName || defaultConfig.mongoDbName;
         } else {
-            console.log('No mongoURI found in process.env!');
-            process.exit(1);
+            if (process.env['mongoURI']) {
+                mongoURI = process.env['mongoURI'];
+            } else {
+                console.log('No mongoURI found in process.env!');
+                process.exit(1);
+            }
+            if (process.env['mongoDbName']) {
+                mongoDbName = process.env['mongoDbName'];
+            } else {
+                console.warn(`No config.json or process.env.mongoDbName, falling back to ${mongoDbName}`);
+            }
         }
 
         delete config.useEnv;
     }
+
     return { ...defaultConfig, ...config, mongoDbName, mongoURI };
 }
 
