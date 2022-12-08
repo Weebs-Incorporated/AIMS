@@ -17,7 +17,12 @@ You can easily get pnpm using:
 npm i -g pnpm
 ```
 
-First will need to set up a MongoDB cluster, and provide a connection URI for it (`mongodb+srv://...`). If you aren't sure how to do this, see the [setting up MongoDB](./.github/docs/MongoDBGuide.md) guide.
+This API uses [MongoDB](https://www.mongodb.com/) for persistent data storage and [Discord OAuth](https://discord.com/developers/docs/topics/oauth2) for user authentication. This means you will need to set up:
+
+-   A MongoDB cluster and provide a connection URI for it (`mongodb+srv://...`).
+    -   See [setting up MongoDB](./.github/docs/MongoDBGuide.md).
+-   A Discord application and provide it's client ID and secret.
+    -   See [setting up Discord OAuth](./.github/docs/DiscordOAuthGuide.md).
 
 Next you can set up the repository from a terminal:
 
@@ -28,7 +33,7 @@ pnpm install
 cp config.example.json config.json
 ```
 
-Finally enter your Mongo URI and Google client secret into the [config.json](./config.json) file you just created. There are a lot of other configuration options you can give to the API, a JSON schema for all the values can be found [here](.github/config-schema.json).
+Finally enter your Mongo URI and Discord client ID and secret into the [config.json](./config.json) file you just created. There are a lot of other configuration options you can give to the API, a JSON schema for all the values can be found [here](.github/config-schema.json).
 
 All done! You can now run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 
@@ -66,6 +71,4 @@ export NODE_ENV=production
 $env:NODE_ENV = 'production'
 ```
 
-# Additional Setup
-
--   Discord OAuth setup: _coming soon_.
+Afterwards you can run the compiled app using `node .`
