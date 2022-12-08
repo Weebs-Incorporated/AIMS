@@ -97,12 +97,11 @@ export function getConfig(): Config {
     const partialConfig: ImportedConfig = require('../config.json');
 
     if (partialConfig.jwtSecret === undefined) {
-        console.log('Warning: No jwtSecret defined in config, sessions will not persist between resets!');
+        console.warn('Warning: No jwtSecret defined in config, sessions will not persist between resets!');
     }
 
     if (partialConfig.mongoURI === undefined) {
-        console.log('Error: No mongoURI defined in config!');
-        process.exit(1);
+        throw new Error('No mongoURI defined in config!');
     }
 
     return {
