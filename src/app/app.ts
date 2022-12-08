@@ -1,12 +1,12 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
-import { Config } from './config';
-import corsMiddleware from './middleware/corsMiddleware';
-import rateLimitingMiddleware from './middleware/rateLimitingMiddleware';
+import { Config } from '../config';
+import corsMiddleware from '../middleware/corsMiddleware';
+import rateLimitingMiddleware from '../middleware/rateLimitingMiddleware';
 
-import apiSpec from '../openapi.json';
-import validatorErrorHandler from './middleware/validatorErrorHandler';
-import validatorMiddleware from './middleware/validatorMiddleware';
+import apiSpec from '../../openapi.json';
+import validatorErrorHandler from '../middleware/validatorErrorHandler';
+import validatorMiddleware from '../middleware/validatorMiddleware';
 import mongoose from 'mongoose';
 
 export default async function createApp(config: Config, isTestMode: boolean = true) {

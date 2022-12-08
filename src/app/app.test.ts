@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import request from 'supertest';
 import createApp from './app';
-import { mockConfig } from './config';
+import { mockConfig } from '../config';
 
 describe('app', () => {
     afterAll(async () => {
