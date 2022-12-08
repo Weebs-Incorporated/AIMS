@@ -3,7 +3,7 @@ import { getConfig } from './config';
 
 const config = getConfig();
 
-createApp(config).then((app) => {
+createApp(config, false).then((app) => {
     app.listen(config.port, () => {
         console.log(`Listening on port ${config.port}`);
     });

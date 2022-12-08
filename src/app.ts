@@ -9,7 +9,7 @@ import validatorErrorHandler from './middleware/validatorErrorHandler';
 import validatorMiddleware from './middleware/validatorMiddleware';
 import mongoose from 'mongoose';
 
-export default async function createApp(config: Config) {
+export default async function createApp(config: Config, isTestMode: boolean = true) {
     const app = express();
 
     app.set('trust proxy', config.numProxies);
@@ -38,7 +38,7 @@ export default async function createApp(config: Config) {
     // connecting to MongoDB
     if (config.mongoURI !== 'test mongo URI') {
         await mongoose.connect(config.mongoURI, { dbName: config.mongoDbName });
-        console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
+        if (!isTestMode) console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
     }
 
     return app;

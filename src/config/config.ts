@@ -97,7 +97,7 @@ export function getConfig(useTestConfig: boolean = false): Config {
         ? JSON.parse(readFileSync('config.test.json', 'utf-8'))
         : require('../../config.json');
 
-    if (partialConfig.jwtSecret === undefined) {
+    if (partialConfig.jwtSecret === undefined && !useTestConfig) {
         console.warn('Warning: No jwtSecret defined in config, sessions will not persist between resets!');
     }
 
