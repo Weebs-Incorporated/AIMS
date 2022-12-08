@@ -4,29 +4,29 @@
 
 2. Create a database, choosing the "shared" option is recommended.
 
-    ![image](./MongoDB_0.png)
+    ![image](../images/MongoDB_0.png)
 
-    ![image](./MongoDB_1.png)
+    ![image](../images/MongoDB_1.png)
 
 3. Make a user, you will need these credentials later.
 
-    ![image](./MongoDB_2.png)
+    ![image](../images/MongoDB_2.png)
 
 4. Add your own, or every IP address to the network access.
 
-    ![image](./MongoDB_3.png)
+    ![image](../images/MongoDB_3.png)
 
 5. Once the cluster has been deployed, click the connect button on it.
 
-    ![image](./MongoDB_4.png)
+    ![image](../images/MongoDB_4.png)
 
 6. Choose the "Connect your application" option.
 
-    ![image](./MongoDB_5.png)
+    ![image](../images/MongoDB_5.png)
 
 7. Now copy the URL.
 
-    ![image](./MongoDB_6.png)
+    ![image](../images/MongoDB_6.png)
 
 Be sure to replace `exampleUser` and `<password>` with the values from step 3.
 
@@ -35,3 +35,13 @@ For instance, in this example the final URL would be:
 `mongodb+srv://exampleUser:examplePassword@cluster0.vqhbsse.mongodb.net/?retryWrites=true&w=majority`
 
 Now you can paste the URL into `config.json`, done!
+
+# Using MongoDB in GitHub Workflows
+
+If you're running a fork of the repository, you'll likely see that the Node.js CI workflow is failing.
+
+This is because some of the API tests try to connect with MongoDB, using the environment variables `MONGODB_DB_NAME` and `MONGODB_URI`.
+
+To make your workflow succeed, set your repository action secrets to valid values for these.
+
+![image](../images/MongoDB_7.png)

@@ -14,8 +14,10 @@ export default async function createApp(config: Config) {
 
     app.set('trust proxy', config.numProxies);
 
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, { customSiteTitle: 'AIMS API' }));
     app.use('/spec', express.static('openapi.json'));
+    app.use('/static', express.static('static', { extensions: ['html'] }));
+    app.use('/favicon.ico', express.static('static/favicon.ico'));
 
     // applying middleware (order is important)
     app.use(express.json());

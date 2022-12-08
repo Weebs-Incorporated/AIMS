@@ -1,6 +1,6 @@
 # Anime Image Management Service [![CodeQL](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/codeql-analysis.yml)[![Node.js CI](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/node.js.ci.yml/badge.svg)](https://github.com/Weebs-Incorporated/AIMS/actions/workflows/node.js.ci.yml)[![codecov](https://codecov.io/github/Weebs-Incorporated/AIMS/branch/main/graph/badge.svg?token=IQCUNAQLW4)](https://codecov.io/github/Weebs-Incorporated/AIMS)
 
-![image](./.github/docs/AIMS.png)
+![image](./.github/images/AIMS.png)
 
 An API for uploading, moderating, and searching (mostly) anime-style images.
 
@@ -17,7 +17,9 @@ You can easily get pnpm using:
 npm i -g pnpm
 ```
 
-Now you can set up the repository from a terminal:
+First will need to set up a MongoDB cluster, and provide a connection URI for it (`mongodb+srv://...`). If you aren't sure how to do this, see the [setting up MongoDB](./.github/docs/MongoDBGuide.md) guide.
+
+Next you can set up the repository from a terminal:
 
 ```sh
 git clone https://github.com/Weebs-Incorporated/AIMS.git AIMS
@@ -26,13 +28,9 @@ pnpm install
 cp config.example.json config.json
 ```
 
-You now need to enter some information such as the JWT secret and Mongo URI.
+Finally enter your Mongo URI and Google client secret into the [config.json](./config.json) file you just created. There are a lot of other configuration options you can give to the API, a JSON schema for all the values can be found [here](.github/config-schema.json).
 
-A schema for all the values can be found [here](.github/config-schema.json), the only required value is a Mongo URI.
-
-Don't know how to get a Mongo URI? See the [Mongo DB setup guide](./.github/docs/MongoDBGuide.md).
-
-Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
+All done! You can now run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 
 # Script Reference
 
@@ -42,18 +40,6 @@ Afterwards you can run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 -   `typecheck` Makes sure there are no type errors in the code.
 -   `test` Runs testing using Jest.
 -   `check-all` Does linting, typechecking, and testing.
-
-## Production Build
-
-Remember to set the `NODE_ENV` environment variable to `production` if you want to start the API in production mode.
-
-```sh
-# Linux & Mac
-export NODE_ENV=production
-
-# Windows
-$env:NODE_ENV = 'production'
-```
 
 # Dependency Reference
 
@@ -67,3 +53,19 @@ $env:NODE_ENV = 'production'
 -   `jsonwebtoken` Helps with user authorization.
 -   `mongoose` Helps with MongoDB database interactions.
 -   `swagger-ui-express` Framework for API documentation.
+
+# Production Build
+
+Remember to set the `NODE_ENV` environment variable to `production` if you want to start the API in production mode.
+
+```sh
+# Linux & Mac
+export NODE_ENV=production
+
+# Windows
+$env:NODE_ENV = 'production'
+```
+
+# Additional Setup
+
+-   Discord OAuth setup: _coming soon_.
