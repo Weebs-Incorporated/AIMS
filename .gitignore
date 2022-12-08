@@ -10,3 +10,4 @@ yarn.lock
 build/
 *.log
 config.json
+config.test.json

@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 
 /** Shape of exported config that will be used throughout the app. */
 export default interface Config {
@@ -91,10 +91,11 @@ export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config
 
 /** Creates a config object from `config.json`, using the {@link DefaultConfig} values as
  * fallback. */
-export function getConfig(): Config {
+export function getConfig(useTestConfig: boolean = false): Config {
     /** Config that we will take values from when forming the final globally-used {@link Config} object. */
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const partialConfig: ImportedConfig = require('../config.json');
+    const partialConfig: ImportedConfig = useTestConfig
+        ? JSON.parse(readFileSync('config.test.json', 'utf-8'))
+        : require('../config.json');
 
     if (partialConfig.jwtSecret === undefined) {
         console.warn('Warning: No jwtSecret defined in config, sessions will not persist between resets!');
