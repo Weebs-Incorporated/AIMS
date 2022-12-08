@@ -18,11 +18,11 @@ describe('config', () => {
 
             if (existsSync('config.json')) {
                 const actualConfig = getConfig();
-                expect(mockedConfig.mongoURI).toEqual(actualConfig.mongoURI);
-                expect(mockedConfig.mongoDbName).toEqual(actualConfig.mongoDbName ?? defaultConfig.mongoDbName);
+                expect(mockedConfig.mongoURI).toBe(actualConfig.mongoURI);
+                expect(mockedConfig.mongoDbName).toBe(actualConfig.mongoDbName ?? defaultConfig.mongoDbName);
             } else {
-                expect(mockedConfig.mongoURI).toEqual(process.env['mongoURI']);
-                expect(mockedConfig.mongoDbName).toEqual(process.env['mongoDbName'] ?? defaultConfig.mongoDbName);
+                expect(mockedConfig.mongoURI).toBe(process.env['mongoURI']);
+                expect(mockedConfig.mongoDbName).toBe(process.env['mongoDbName'] ?? defaultConfig.mongoDbName);
             }
         });
     });
