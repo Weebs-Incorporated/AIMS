@@ -1,7 +1,7 @@
 import cors from 'cors';
 import { Config } from '../config';
 
-export default function corsMiddleware(config: Config) {
+export function corsMiddleware(config: Config) {
     const whitelist = new Set(config.clientUrls);
 
     return cors({

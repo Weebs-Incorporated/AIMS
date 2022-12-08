@@ -1,6 +1,6 @@
 import * as OpenApiValidator from 'express-openapi-validator';
 
-export default function validatorMiddleware() {
+export function validatorMiddleware() {
     return OpenApiValidator.middleware({
         apiSpec: './openapi.json',
         validateRequests: true,
