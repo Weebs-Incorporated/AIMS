@@ -23,7 +23,7 @@ Make sure the email you will be using for testing is in the **test users** table
 
 ![image](../images/Google_2.png)
 
-There are now 2 ways you can login with google:
+There are now 2 ways you can login with Google, both will require you to change the client ID in line 16 of the [googleLogin.html](../../static/googleLogin.html#L16) file.
 
 1. Using the [VSCode live server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) you can navigate to the [googleLogin.html](../../static/googleLogin.html) file.
 
