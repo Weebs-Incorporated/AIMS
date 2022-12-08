@@ -115,7 +115,7 @@
                 "type": "string",
                 "example": "2022-11-08T02:20:08.190Z"
             },
-            "SiteUser": {
+            "User": {
                 "type": "object",
                 "required": [
                     "_id",
@@ -206,7 +206,7 @@
                             "additionalProperties": false,
                             "properties": {
                                 "userData": {
-                                    "$ref": "#/components/schemas/SiteUser"
+                                    "$ref": "#/components/schemas/User"
                                 },
                                 "discordAuth": {
                                     "$ref": "#/components/schemas/DiscordAccessTokenResponse"
