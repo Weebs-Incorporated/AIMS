@@ -1,7 +1,12 @@
 enum UserPermissions {
     None = 0,
 
-    /** Change permissions of themselves and others (excluding this permission). */
+    /** Change permissions of themselves and others.
+     *
+     * - Cannot remove this permission from themselves.
+     * - Cannot modify permissions of other users who have this permission.
+     *
+     */
     AssignPermissions = 1 << 0,
 
     /** Modify post attributes, delete any comments, and accept/deny/withdraw posts. */
@@ -12,6 +17,9 @@ enum UserPermissions {
 
     /** Submit posts (to be audited). */
     Upload = 1 << 3,
+
+    /** Give/remove the {@link AssignPermissions} permission to other users, and view IPs. */
+    Owner = 1 << 4,
 }
 
 export default UserPermissions;
