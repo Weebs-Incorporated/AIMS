@@ -4,6 +4,10 @@ import createApp from './app';
 import { mockConfig } from './config';
 
 describe('app', () => {
+    afterAll(async () => {
+        await mongoose.disconnect();
+    });
+
     it('returns status code 200', async () => {
         const response = await request(await createApp(mockConfig()))
             .get('/')
@@ -18,9 +22,5 @@ describe('app', () => {
             .send();
 
         expect(response.statusCode).toBe(200);
-    });
-
-    afterAll(async () => {
-        await mongoose.disconnect();
     });
 });
