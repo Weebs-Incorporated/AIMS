@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import { existsSync, readFileSync } from 'fs';
 
 /** Shape of exported config that will be used throughout the app. */
-export default interface Config {
+export interface Config {
     port: number;
     clientUrls: string[];
     numProxies: number;
@@ -44,7 +44,7 @@ export const defaultConfig: Omit<Config, 'mongoURI'> = {
     jwtSecret: randomBytes(8).toString('hex'),
     jwtDuration: '7d',
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    version: process.env.NPM_VERSION || require('../package.json').version,
+    version: process.env.NPM_VERSION || require('../../package.json').version,
     startedAt: new Date().toISOString(),
 };
 
@@ -64,7 +64,7 @@ export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config
 
     if (config?.useEnv) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const fromFile = existsSync('config.json') ? (require('../config.json') as ImportedConfig) : false;
+        const fromFile = existsSync('config.json') ? (require('../../config.json') as ImportedConfig) : false;
 
         if (fromFile !== false) {
             mongoURI = fromFile.mongoURI;
@@ -95,7 +95,7 @@ export function getConfig(useTestConfig: boolean = false): Config {
     /** Config that we will take values from when forming the final globally-used {@link Config} object. */
     const partialConfig: ImportedConfig = useTestConfig
         ? JSON.parse(readFileSync('config.test.json', 'utf-8'))
-        : require('../config.json');
+        : require('../../config.json');
 
     if (partialConfig.jwtSecret === undefined) {
         console.warn('Warning: No jwtSecret defined in config, sessions will not persist between resets!');

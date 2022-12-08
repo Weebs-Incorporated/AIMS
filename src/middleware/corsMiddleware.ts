@@ -1,5 +1,5 @@
 import cors from 'cors';
-import Config from '../config';
+import { Config } from '../config';
 
 export default function corsMiddleware(config: Config) {
     const whitelist = new Set(config.clientUrls);

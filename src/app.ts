@@ -1,6 +1,6 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
-import Config from './config';
+import { Config } from './config';
 import corsMiddleware from './middleware/corsMiddleware';
 import rateLimitingMiddleware from './middleware/rateLimitingMiddleware';
 

@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit';
-import Config from '../config';
+import { Config } from '../config';
 
 export default function rateLimitingMiddleware(config: Config) {
     const bypassTokens = new Set(config.rateLimitBypassTokens);
