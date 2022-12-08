@@ -1,9 +1,13 @@
 import UserPermissions from './UserPermissions';
 
 export default interface User {
-    name: string;
+    _id: string;
 
-    password: string;
+    username: string;
+
+    discriminator: string;
+
+    avatar: string | null;
 
     latestIp: string;
 

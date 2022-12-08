@@ -57,6 +57,36 @@
                 }
             }
         },
+        "/login": {
+            "post": {
+                "tags": ["Login Process"],
+                "description": "Completes the Discord OAuth2 login process, returning a site access token.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": ["code", "redirect_uri"],
+                                "additionalProperties": false,
+                                "description": "OAuth2 payload given by Discord.",
+                                "properties": {
+                                    "code": {
+                                        "type": "string"
+                                    },
+                                    "redirect_uri": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/LoginOrRefreshSuccess"
+                    }
+                }
+            }
+        },
         "/spec": {
             "get": {
                 "tags": ["Other"],
@@ -84,10 +114,119 @@
             "ISOString": {
                 "type": "string",
                 "example": "2022-11-08T02:20:08.190Z"
+            },
+            "SiteUser": {
+                "type": "object",
+                "required": [
+                    "_id",
+                    "username",
+                    "latestIp",
+                    "permissions",
+                    "registered",
+                    "lastLoginOrRefresh",
+                    "posts",
+                    "comments"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "discriminator": {
+                        "type": "string"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "latestIp": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Only shown if the requesting user is this one or the site owner."
+                    },
+                    "permissions": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "registered": {
+                        "$ref": "#/components/schemas/ISOString"
+                    },
+                    "lastLoginOrRefresh": {
+                        "$ref": "#/components/schemas/ISOString"
+                    },
+                    "posts": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "comments": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "DiscordAccessTokenResponse": {
+                "type": "object",
+                "description": "Object returned from a Discord OAuth2 token route, see the official [Discord API docs](https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-access-token-response) for more info.",
+                "required": ["access_token", "token_type", "expires_in", "refresh_token", "scope"],
+                "additionalProperties": false,
+                "properties": {
+                    "access_token": {
+                        "type": "string"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "default": "Bearer"
+                    },
+                    "expires_in": {
+                        "type": "integer",
+                        "default": 604800,
+                        "description": "How long in seconds until the returned access token expires."
+                    },
+                    "refresh_token": {
+                        "type": "string"
+                    },
+                    "scope": {
+                        "type": "string",
+                        "default": "Identify"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "LoginOrRefreshSuccess": {
+                "description": "Successful login/refresh payload.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["userData", "discordAuth", "siteAuth"],
+                            "additionalProperties": false,
+                            "properties": {
+                                "userData": {
+                                    "$ref": "#/components/schemas/SiteUser"
+                                },
+                                "discordAuth": {
+                                    "$ref": "#/components/schemas/DiscordAccessTokenResponse"
+                                },
+                                "siteAuth": {
+                                    "type": "string",
+                                    "description": "JsonWebToken to use for any elevated requests to this API."
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
     "tags": [
+        {
+            "name": "Login Process",
+            "description": "Operations for logging into the site via Discord, logging out, and refreshing."
+        },
         {
             "name": "Other",
             "description": "Miscellaneous operations."
