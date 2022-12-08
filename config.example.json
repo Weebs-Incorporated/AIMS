@@ -2,5 +2,7 @@
     "$schema": "./.github/config-schema.json",
     "port": 5000,
     "jwtSecret": "super_secret_string",
-    "mongoURI": "mongodb+srv://..."
+    "mongoURI": "mongodb+srv://...",
+    "discordClientId": "10503...",
+    "discordClientSecret": "2ABC..."
 }

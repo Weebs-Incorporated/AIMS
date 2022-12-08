@@ -14,27 +14,39 @@ export interface Config {
     usernameValidator: RegExp;
     jwtSecret: string;
     jwtDuration: string | number;
+    discordClientId: string;
+    discordClientSecret: string;
 
     // the following values are not defined in `config.json` and are automatically made
     version: string;
     startedAt: string;
 }
 
+/** These config values MUST be supplied, otherwise the app will not be able to start. */
+export type RequiredConfigKeys = keyof Pick<Config, 'mongoURI' | 'discordClientId' | 'discordClientSecret'>;
+
+/** "Default" values for required keys, used for testing only. */
+export const requiredConfigKeyFallbacks: Pick<Config, RequiredConfigKeys> = {
+    mongoURI: 'test mongo URI',
+    discordClientId: 'test Discord client ID',
+    discordClientSecret: 'test Discord client secret',
+};
+
 /**
  * Expected shape of `config.example.json` and `config.json`.
  *
  * The only differences between this and {@link Config} are:
- * - All values are {@link Partial}, since the JSON files don't **need** to have them (they should all have defaults to
- * fallback to).
+ * - Non-important values are {@link Partial}, since the JSON files don't **need** to have them (they should all have
+ * defaults to fallback to).
  * - Some values have different types, e.g. {@link Config.usernameValidator usernameValidator} is a string here since
  * the RegExp class can't be represented in JSON.
  */
-interface ImportedConfig extends Omit<Partial<Config>, 'usernameValidator' | 'mongoURI'> {
-    usernameValidator: string; // cannot represent a RegExp class in JSON
-    mongoURI: string; // mongoURI cannot be partial
-}
+export type ImportedConfig = Omit<Partial<Config>, 'usernameValidator'> &
+    Pick<Config, RequiredConfigKeys> & {
+        usernameValidator?: string; // cannot represent a RegExp class in JSON
+    };
 
-export const defaultConfig: Omit<Config, 'mongoURI'> = {
+export const defaultConfig: Omit<Config, RequiredConfigKeys> = {
     port: 5000,
     clientUrls: [],
     numProxies: 0,
@@ -52,23 +64,24 @@ export const defaultConfig: Omit<Config, 'mongoURI'> = {
 /**
  * Makes a new config object for running tests with.
  *
- * If `useEnv` is specified in the partial input config, will attempt to override the default `mongoURI` and
- * `mongoDbName` values with those from `config.json` (if it exists) or `process.env.mongoURI` and
- * `process.env.mongoDbName`.
+ * `mongoURI` and `mongoDbName` can be retrieved from the `config.json` file (if it exists), or
+ * `process.env`. This is done by including the `useEnv` option.
  *
- * If `config.json` does not exist and `process.env.mongoURI` is missing, will
- * exit the process with status 1.
+ * If `useEnv` is specified, and both `config.json` and `process.env.mongoURI` do not exist, this function will exit the
+ * process with status 1.
+ *
+ * If a `mongoDbName` is provided from both the parameter input and `process.env.mongoDbName`, the latter will take
+ * priority.
  */
-export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config {
-    let mongoDbName = defaultConfig.mongoDbName;
-    let mongoURI = 'test mongo URI';
+export function mockConfig(config?: Partial<Omit<Config, RequiredConfigKeys>> & { useEnv?: true }): Config {
+    let mongoDbName = config?.mongoDbName ?? defaultConfig.mongoDbName;
+    let mongoURI = requiredConfigKeyFallbacks.mongoURI;
 
     if (config?.useEnv) {
-        const fromFile = existsSync('config.json') ? (require('../../config.json') as ImportedConfig) : false;
-
-        if (fromFile !== false) {
-            mongoURI = fromFile.mongoURI;
-            mongoDbName = fromFile.mongoDbName || defaultConfig.mongoDbName;
+        if (existsSync('config.json')) {
+            const fileConfig: ImportedConfig = require('../../config.json');
+            mongoURI = fileConfig.mongoURI;
+            if (fileConfig.mongoDbName) mongoDbName = fileConfig.mongoDbName;
         } else {
             if (process.env['mongoURI']) {
                 mongoURI = process.env['mongoURI'];
@@ -86,7 +99,13 @@ export function mockConfig(config?: Partial<Config> & { useEnv?: true }): Config
         delete config.useEnv;
     }
 
-    return { ...defaultConfig, ...config, mongoDbName, mongoURI };
+    return {
+        ...defaultConfig,
+        ...config,
+        ...requiredConfigKeyFallbacks,
+        mongoURI,
+        mongoDbName,
+    };
 }
 
 /** Creates a config object from `config.json`, using the {@link DefaultConfig} values as
@@ -105,11 +124,20 @@ export function getConfig(useTestConfig: boolean = false): Config {
         throw new Error('No mongoURI defined in config!');
     }
 
+    if (partialConfig.discordClientSecret === undefined) {
+        throw new Error('No discordClientSecret defined in config!');
+    }
+
+    if (partialConfig.discordClientId === undefined) {
+        throw new Error('No discordClientId defined in config!');
+    }
+
     return {
         ...defaultConfig,
         ...partialConfig,
-        usernameValidator: partialConfig.usernameValidator
-            ? new RegExp(partialConfig.usernameValidator)
-            : defaultConfig.usernameValidator,
+        usernameValidator:
+            partialConfig.usernameValidator !== undefined
+                ? new RegExp(partialConfig.usernameValidator)
+                : defaultConfig.usernameValidator,
     };
 }

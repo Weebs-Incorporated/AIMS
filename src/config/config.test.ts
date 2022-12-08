@@ -1,16 +1,16 @@
 import { existsSync, rmSync, writeFileSync } from 'fs';
-import { defaultConfig, getConfig, mockConfig } from './config';
+import { defaultConfig, getConfig, mockConfig, requiredConfigKeyFallbacks } from './config';
 
 describe('config', () => {
     describe('mockConfig', () => {
         it('returns default config when called with no arguments', () => {
             const mockedConfig = mockConfig();
-            expect(mockedConfig).toEqual({ ...defaultConfig, mongoURI: mockedConfig.mongoURI });
+            expect(mockedConfig).toEqual({ ...defaultConfig, ...requiredConfigKeyFallbacks });
         });
 
         it('allows partial overrides', () => {
             const mockedConfig = mockConfig({ numProxies: 5 });
-            expect(mockedConfig).toEqual({ ...defaultConfig, mongoURI: mockedConfig.mongoURI, numProxies: 5 });
+            expect(mockedConfig).toEqual({ ...defaultConfig, ...requiredConfigKeyFallbacks, numProxies: 5 });
         });
 
         it('reads config.json or process.env if useEnv is provided', () => {
@@ -33,15 +33,15 @@ describe('config', () => {
         });
 
         it('falls back to default values when actual ones are omitted', () => {
-            writeFileSync('config.test.json', JSON.stringify({ mongoURI: '123' }), 'utf-8');
+            writeFileSync('config.test.json', JSON.stringify(requiredConfigKeyFallbacks), 'utf-8');
 
-            expect(getConfig(true)).toEqual({ ...defaultConfig, mongoURI: '123' });
+            expect(getConfig(true)).toEqual({ ...defaultConfig, ...requiredConfigKeyFallbacks });
         });
 
-        it('throws an error if no MongoURI is present', () => {
-            writeFileSync('config.test.json', JSON.stringify({ port: 6000 }), 'utf-8');
+        it('throws an error if required keys are missing', () => {
+            writeFileSync('config.test.json', JSON.stringify(defaultConfig), 'utf-8');
 
-            expect(() => getConfig(true)).toThrow();
+            expect(() => getConfig(true)).toThrowError();
         });
     });
 });
