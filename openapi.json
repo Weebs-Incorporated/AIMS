@@ -73,7 +73,8 @@
                                         "type": "string"
                                     },
                                     "redirect_uri": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "http://localhost:5000/static/discordOAuth2"
                                     }
                                 }
                             }
@@ -139,7 +140,7 @@
                 "required": [
                     "_id",
                     "username",
-                    "descriminator",
+                    "discriminator",
                     "avatar",
                     "latestIp",
                     "permissions",
@@ -196,12 +197,11 @@
                     "application/json": {
                         "schema": {
                             "type": "object",
-                            "required": ["id", "refreshToken", "expiresInSeconds", "siteToken", "type"],
+                            "required": ["userData", "refreshToken", "expiresInSeconds", "siteToken", "type"],
                             "additionalProperties": false,
                             "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Discord ID of this user."
+                                "userData": {
+                                    "$ref": "#/components/schemas/User"
                                 },
                                 "refreshToken": {
                                     "type": "string",
