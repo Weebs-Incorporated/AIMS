@@ -1,5 +1,5 @@
 import supertest, { SuperTest, Test } from 'supertest';
-import createApp from '../app';
+import { createApp } from '../app';
 import { mockConfig } from '../config';
 
 describe('corsMiddleware', () => {
