@@ -1,6 +1,7 @@
+import { User } from '../User';
+
 export interface LoginResponse {
-    /** Discord ID of this user. */
-    id: string;
+    userData: User;
     /** Token to use for extending this user's current session. */
     refreshToken: string;
     /** How long until the current siteToken expires, in seconds. */

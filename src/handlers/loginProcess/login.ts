@@ -33,7 +33,8 @@ export function handleLogin(
         }
 
         // get existing user if present
-        let siteUser = await UserModel.findById<User>(discordUser.id);
+        const fetchedUser = await UserModel.findById<User>(discordUser.id);
+        let userData: User;
 
         const now = new Date().toISOString();
 
@@ -46,7 +47,7 @@ export function handleLogin(
             lastLoginOrRefresh: now,
         };
 
-        if (siteUser === null) {
+        if (fetchedUser === null) {
             // no existing user, so is registering
             const newUser: User = {
                 ...baseUserInfo,
@@ -57,23 +58,29 @@ export function handleLogin(
                 comments: 0,
             };
             await UserModel.create(newUser);
-            siteUser = newUser;
+            userData = newUser;
             type = 'register';
         } else {
             // existing user, so is logging in
             const updatedUser: User = {
-                ...siteUser,
+                _id: fetchedUser._id,
+                permissions: fetchedUser.permissions,
+                registered: fetchedUser.registered,
+                posts: fetchedUser.posts,
+                comments: fetchedUser.comments,
                 ...baseUserInfo,
             };
             await UserModel.findByIdAndUpdate(discordUser.id, updatedUser);
-            siteUser = updatedUser;
+            userData = updatedUser;
             type = 'login';
         }
 
         const siteToken = makeSiteToken(config, discordAuth, discordUser.id);
 
+        console.log(userData);
+
         return res.status(200).json({
-            id: discordUser.id,
+            userData,
             refreshToken: discordAuth.refresh_token,
             expiresInSeconds: discordAuth.expires_in,
             siteToken,
