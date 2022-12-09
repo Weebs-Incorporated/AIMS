@@ -1,11 +1,12 @@
 import express from 'express';
-import swaggerUi from 'swagger-ui-express';
 import mongoose from 'mongoose';
-import { corsMiddleware, rateLimitingMiddleware, validatorMiddleware, validatorErrorHandler } from '../middleware';
-import { Config } from '../config';
+import swaggerUi from 'swagger-ui-express';
 import apiSpec from '../../openapi.json';
+import { Config } from '../config';
+import { handleLogin, makeLoginLink } from '../handlers';
+import { corsMiddleware, rateLimitingMiddleware, validatorMiddleware, validatorErrorHandler } from '../middleware';
 
-export default async function createApp(config: Config, isTestMode: boolean = true) {
+export async function createApp(config: Config, isTestMode: boolean = true) {
     const app = express();
 
     app.set('trust proxy', config.numProxies);
@@ -31,10 +32,18 @@ export default async function createApp(config: Config, isTestMode: boolean = tr
         }),
     );
 
+    app.post('/login', handleLogin(config));
+    app.get('/makeLoginLink', makeLoginLink(config));
+
     // connecting to MongoDB
     if (config.mongoURI !== 'test mongo URI') {
-        await mongoose.connect(config.mongoURI, { dbName: config.mongoDbName });
-        if (!isTestMode) console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
+        if (isTestMode) {
+            await mongoose.connect(config.mongoURI, { dbName: config.mongoDbName });
+        } else {
+            mongoose.connect(config.mongoURI, { dbName: config.mongoDbName }).then(() => {
+                console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
+            });
+        }
     }
 
     return app;
