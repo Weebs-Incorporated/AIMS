@@ -1,4 +1,4 @@
-import supertest, { SuperTest, Test } from 'supertest';
+import request, { SuperTest, Test } from 'supertest';
 import { createApp } from '../app';
 import { mockConfig } from '../config';
 
@@ -8,7 +8,7 @@ describe('corsMiddleware', () => {
 
         beforeAll(async () => {
             const config = mockConfig({ clientUrls: [] });
-            app = supertest(await createApp(config));
+            app = request(await createApp(config));
         });
 
         it('always allows undefined origin', async () => {
@@ -37,7 +37,7 @@ describe('corsMiddleware', () => {
 
         beforeAll(async () => {
             const config = mockConfig({ clientUrls: ['https://example.com'] });
-            app = supertest(await createApp(config));
+            app = request(await createApp(config));
         });
 
         it('always allows undefined origin', async () => {
