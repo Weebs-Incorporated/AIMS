@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import request from 'supertest';
-import createApp from './app';
+import { createApp } from './app';
 import { mockConfig } from '../config';
 
 describe('app', () => {
