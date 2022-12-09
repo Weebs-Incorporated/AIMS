@@ -82,7 +82,26 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/LoginOrRefreshSuccess"
+                        "$ref": "#/components/responses/LoginResponse"
+                    }
+                }
+            }
+        },
+        "/makeLoginLink": {
+            "get": {
+                "tags": ["Login Process"],
+                "description": "Generates an Discord OAuth2 authorization URL.\nThis should be used for testing purposes only, as client-side generations of this are possible and [more secure](https://discord.com/developers/docs/topics/oauth2#state-and-security).",
+                "responses": {
+                    "200": {
+                        "description": "Authorization URL.",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://discord.com/api/v10/oauth2/authorize?client_id=01234567890&state=abcdefg&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Flogin&prompt=consent&scope=identify"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -120,6 +139,8 @@
                 "required": [
                     "_id",
                     "username",
+                    "descriminator",
+                    "avatar",
                     "latestIp",
                     "permissions",
                     "registered",
@@ -166,54 +187,39 @@
                         "minimum": 0
                     }
                 }
-            },
-            "DiscordAccessTokenResponse": {
-                "type": "object",
-                "description": "Object returned from a Discord OAuth2 token route, see the official [Discord API docs](https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-access-token-response) for more info.",
-                "required": ["access_token", "token_type", "expires_in", "refresh_token", "scope"],
-                "additionalProperties": false,
-                "properties": {
-                    "access_token": {
-                        "type": "string"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "default": "Bearer"
-                    },
-                    "expires_in": {
-                        "type": "integer",
-                        "default": 604800,
-                        "description": "How long in seconds until the returned access token expires."
-                    },
-                    "refresh_token": {
-                        "type": "string"
-                    },
-                    "scope": {
-                        "type": "string",
-                        "default": "Identify"
-                    }
-                }
             }
         },
         "responses": {
-            "LoginOrRefreshSuccess": {
-                "description": "Successful login/refresh payload.",
+            "LoginResponse": {
+                "description": "Successful login/register/refresh payload.",
                 "content": {
                     "application/json": {
                         "schema": {
                             "type": "object",
-                            "required": ["userData", "discordAuth", "siteAuth"],
+                            "required": ["id", "refreshToken", "expiresInSeconds", "siteToken", "type"],
                             "additionalProperties": false,
                             "properties": {
-                                "userData": {
-                                    "$ref": "#/components/schemas/User"
-                                },
-                                "discordAuth": {
-                                    "$ref": "#/components/schemas/DiscordAccessTokenResponse"
-                                },
-                                "siteAuth": {
+                                "id": {
                                     "type": "string",
-                                    "description": "JsonWebToken to use for any elevated requests to this API."
+                                    "description": "Discord ID of this user."
+                                },
+                                "refreshToken": {
+                                    "type": "string",
+                                    "description": "Token to use for extending this user's current session."
+                                },
+                                "expiresInSeconds": {
+                                    "type": "integer",
+                                    "default": 604800,
+                                    "description": "How long until the current siteToken expires, in seconds."
+                                },
+                                "siteToken": {
+                                    "type": "string",
+                                    "description": "Signed JWT to send in `Authorization` header for any elevated requests to this API."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Type of operation this was generated from.",
+                                    "enum": ["login", "register", "refresh"]
                                 }
                             }
                         }
