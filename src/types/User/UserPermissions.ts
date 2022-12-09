@@ -1,4 +1,4 @@
-enum UserPermissions {
+export enum UserPermissions {
     None = 0,
 
     /** Change permissions of themselves and others.
@@ -21,5 +21,3 @@ enum UserPermissions {
     /** Give/remove the {@link AssignPermissions} permission to other users, and view IPs. */
     Owner = 1 << 4,
 }
-
-export default UserPermissions;
