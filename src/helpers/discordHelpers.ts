@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { randomBytes } from 'crypto';
-import { OAuth2Routes, OAuth2Scopes, RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
-import { URLSearchParams } from 'url';
+import {
+    APIUser,
+    OAuth2Routes,
+    OAuth2Scopes,
+    RESTPostOAuth2AccessTokenResult,
+    RouteBases,
+} from 'discord-api-types/v10';
 import { Config } from '../config';
 
 function makeRequestBody(config: Config): URLSearchParams {
@@ -27,6 +32,7 @@ export function makeAuthorizationLink(config: Config, redirectUri: string): stri
     const state = randomBytes(16).toString('hex');
 
     const params = new URLSearchParams();
+    params.set('response_type', 'code');
     params.set('client_id', config.discordClientId);
     params.set('state', state);
     params.set('redirect_uri', redirectUri);
@@ -42,7 +48,7 @@ export function makeAuthorizationLink(config: Config, redirectUri: string): stri
  * @param {String} authCode Authorization code returned by Discord.
  * @param {String} redirectUri Redirect URI (should exactly match one from the application settings).
  * @returns {Promise<RESTPostOAuth2AccessTokenResult>} Access token information.
- * @throws Throws an error if the provided code is invalid.
+ * @throws Throws an error if the provided code or redirect URI is invalid.
  */
 export async function getAccessToken(
     config: Config,
@@ -54,7 +60,12 @@ export async function getAccessToken(
     body.set('redirect_uri', redirectUri);
     body.set('grant_type', 'authorization_code');
 
-    const { data } = await axios.post<RESTPostOAuth2AccessTokenResult>(OAuth2Routes.tokenURL, body);
+    const { data } = await axios.post<RESTPostOAuth2AccessTokenResult>(OAuth2Routes.tokenURL, body, {
+        headers: {
+            'Accept-Encoding': 'application/json',
+        },
+    });
+
     return data;
 }
 
@@ -74,7 +85,11 @@ export async function refreshAccessToken(
     body.set('refresh_token', refreshToken);
     body.set('grant_type', 'refresh_token');
 
-    const { data } = await axios.post<RESTPostOAuth2AccessTokenResult>(OAuth2Routes.tokenURL, body);
+    const { data } = await axios.post<RESTPostOAuth2AccessTokenResult>(OAuth2Routes.tokenURL, body, {
+        headers: {
+            'Accept-Encoding': 'application/json',
+        },
+    });
     return data;
 }
 
@@ -90,4 +105,27 @@ export async function revokeToken(config: Config, accessToken: string): Promise<
     body.set('token', accessToken);
 
     await axios.post(OAuth2Routes.tokenRevocationURL, body);
+}
+
+/**
+ * Attempts to get a {@link APIUser Discord user response} from an access token.
+ * @param {String} accessToken OAuth2 access token of the user.
+ * @returns {Promise<APIUser|null>} Returns the user info on success, or `null` if the provided access token is invalid.
+ * @throws Throws an error if the request fails.
+ */
+export async function getUserInfo(accessToken: string): Promise<APIUser | null> {
+    try {
+        const { data } = await axios.get<APIUser>(`${RouteBases.api}/users/@me`, {
+            headers: {
+                authorization: `Bearer ${accessToken}`,
+                'Accept-Encoding': 'application/json',
+            },
+        });
+        return data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+            return null;
+        }
+        throw error;
+    }
 }
