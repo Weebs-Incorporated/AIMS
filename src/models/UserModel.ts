@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import User from '../types/User/User';
+import { User } from '../types/User/User';
 
 export const UserSchema = new Schema<User>({
     _id: {
@@ -40,6 +40,4 @@ export const UserSchema = new Schema<User>({
     comments: Number,
 });
 
-const UserModel = model('users', UserSchema);
-
-export default UserModel;
+export const UserModel = model('users', UserSchema);

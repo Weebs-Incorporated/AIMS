@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-import createApp from '../app';
+import { createApp } from '../app';
 import { mockConfig } from '../config';
-import UserModel from './UserModel';
-import UserPermissions from '../types/User/UserPermissions';
-import User from '../types/User/User';
+import { User, UserPermissions } from '../types';
+import { UserModel } from './UserModel';
 
 describe('UserModel', () => {
     afterAll(async () => {
