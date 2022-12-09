@@ -1,6 +1,6 @@
-import UserPermissions from './UserPermissions';
+import { UserPermissions } from './UserPermissions';
 
-export default interface User {
+export interface User {
     _id: string;
 
     username: string;
@@ -20,4 +20,8 @@ export default interface User {
     posts: number;
 
     comments: number;
+}
+
+export interface ClientFacingUser extends Omit<User, 'latestIp'> {
+    latestIp: string | null;
 }
