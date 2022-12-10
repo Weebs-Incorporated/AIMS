@@ -1,47 +1,49 @@
-import { existsSync, rmSync, writeFileSync } from 'fs';
-import { defaultConfig, getConfig, mockConfig, requiredConfigKeyFallbacks } from './config';
+import { rmSync, writeFileSync } from 'fs';
+import { Config, defaultConfig, getConfig, ImportedConfig, mockConfig } from './config';
 
 describe('config', () => {
     describe('mockConfig', () => {
         it('returns default config when called with no arguments', () => {
-            const mockedConfig = mockConfig();
-            expect(mockedConfig).toEqual({ ...defaultConfig, ...requiredConfigKeyFallbacks });
+            expect(mockConfig()).toEqual(defaultConfig);
         });
 
         it('allows partial overrides', () => {
-            const mockedConfig = mockConfig({ numProxies: 5 });
-            expect(mockedConfig).toEqual({ ...defaultConfig, ...requiredConfigKeyFallbacks, numProxies: 5 });
-        });
-
-        it('reads config.json or process.env if useEnv is provided', () => {
-            const mockedConfig = mockConfig({ useEnv: true });
-
-            if (existsSync('config.json')) {
-                const actualConfig = getConfig();
-                expect(mockedConfig.mongoURI).toBe(actualConfig.mongoURI);
-                expect(mockedConfig.mongoDbName).toBe(actualConfig.mongoDbName ?? defaultConfig.mongoDbName);
-            } else {
-                expect(mockedConfig.mongoURI).toBe(process.env['mongoURI']);
-                expect(mockedConfig.mongoDbName).toBe(process.env['mongoDbName'] ?? defaultConfig.mongoDbName);
-            }
+            expect(mockConfig({ numProxies: 5 })).toEqual({ ...defaultConfig, numProxies: 5 });
         });
     });
 
     describe('getConfig', () => {
+        const minRequiredConfig: Partial<Config> = {
+            mongoURI: defaultConfig.mongoURI,
+            discordClientId: defaultConfig.discordClientId,
+            discordClientSecret: defaultConfig.discordClientSecret,
+        };
+
         afterEach(() => {
             rmSync('config.test.json');
         });
 
-        it('falls back to default values when actual ones are omitted', () => {
-            writeFileSync('config.test.json', JSON.stringify(requiredConfigKeyFallbacks), 'utf-8');
+        it('returns default config when config file is empty', () => {
+            writeFileSync('config.test.json', JSON.stringify(minRequiredConfig), 'utf-8');
+            expect(getConfig(true)).toEqual(defaultConfig);
+        });
 
-            expect(getConfig(true)).toEqual({ ...defaultConfig, ...requiredConfigKeyFallbacks });
+        it('allows partial overrides', () => {
+            writeFileSync('config.test.json', JSON.stringify({ ...minRequiredConfig, numProxies: 5 }), 'utf-8');
+            expect(getConfig(true)).toEqual({ ...defaultConfig, numProxies: 5 });
         });
 
         it('throws an error if required keys are missing', () => {
-            writeFileSync('config.test.json', JSON.stringify(defaultConfig), 'utf-8');
+            const missingConfig = { ...defaultConfig, mongoURI: undefined };
+            writeFileSync('config.test.json', JSON.stringify(missingConfig), 'utf-8');
 
             expect(() => getConfig(true)).toThrowError();
+        });
+
+        it("converts 'usernameValidator' into a RegExp", () => {
+            const customConfig: ImportedConfig = { ...minRequiredConfig, usernameValidator: '^[a-zA-Z0-9]' };
+            writeFileSync('config.test.json', JSON.stringify(customConfig), 'utf-8');
+            expect(getConfig(true).usernameValidator.toString()).toEqual('/^[a-zA-Z0-9]/');
         });
     });
 });
