@@ -1,7 +1,7 @@
 import { RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
 import { JsonWebTokenError, sign, TokenExpiredError, verify } from 'jsonwebtoken';
 import { mockConfig } from '../config';
-import { makeSiteToken, validateSiteToken } from './siteTokenHelpers';
+import { makeSiteToken, SiteAuthError, validateSiteToken } from './siteTokenHelpers';
 
 describe('siteTokenHelpers', () => {
     const exampleAuth: RESTPostOAuth2AccessTokenResult = {
@@ -31,9 +31,9 @@ describe('siteTokenHelpers', () => {
                 validateSiteToken(mockConfig(), undefined);
                 fail('should have thrown an error');
             } catch (error) {
-                if (error instanceof Error) {
+                if (error instanceof SiteAuthError) {
                     expect(error.message).toBe('Missing authorization header');
-                } else fail('should have thrown an error');
+                } else fail('should have thrown a SiteAuth error');
             }
         });
 
@@ -71,9 +71,9 @@ describe('siteTokenHelpers', () => {
                 validateSiteToken(config, tokenString);
                 fail('should have thrown an error');
             } catch (error) {
-                if (error instanceof Error) {
+                if (error instanceof SiteAuthError) {
                     expect(error.message).toContain('Token has invalid payload type');
-                } else fail('should have thrown an error');
+                } else fail('should have thrown a SiteAuthError');
             }
         });
 
@@ -86,9 +86,9 @@ describe('siteTokenHelpers', () => {
                 validateSiteToken(config, tokenString);
                 fail('should have thrown an error');
             } catch (error) {
-                if (error instanceof Error) {
+                if (error instanceof SiteAuthError) {
                     expect(error.message).toContain('Token lacks an expiration date');
-                } else fail('should have thrown an error');
+                } else fail('should have thrown a SiteAuthError');
             }
         });
 
@@ -118,18 +118,18 @@ describe('siteTokenHelpers', () => {
                 validateSiteToken(config, tokenA);
                 fail('should have thrown an error');
             } catch (error) {
-                if (error instanceof Error) {
+                if (error instanceof SiteAuthError) {
                     expect(error.message).toBe('No ID in payload');
-                } else fail('should have thrown an error');
+                } else fail('should have thrown a SiteAuthError');
             }
 
             try {
                 validateSiteToken(config, tokenB);
                 fail('should have thrown an error');
             } catch (error) {
-                if (error instanceof Error) {
+                if (error instanceof SiteAuthError) {
                     expect(error.message).toBe('No refresh_token in payload');
-                } else fail('should have thrown an error');
+                } else fail('should have thrown a SiteAuthError');
             }
         });
 

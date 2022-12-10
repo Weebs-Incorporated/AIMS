@@ -24,32 +24,34 @@ export function makeSiteToken(config: Config, discordAuth: RESTPostOAuth2AccessT
     return sign(payload, config.jwtSecret, { expiresIn: expires_in });
 }
 
+export class SiteAuthError extends Error {}
+
 /**
  * Validates an authorization header.
  * @param {Config} config Config to get JWT secret from.
  * @param {string|undefined} token Authorization header value.
  * @returns {SiteTokenPayload} Decoded site token.
- * @throws Throws an error if the token is invalid.
+ * @throws Throws a {@link SiteAuthError}, JsonWebTokenError, or a TokenExpiredError if the token is invalid.
  */
 export function validateSiteToken(config: Config, token: string | undefined): SiteTokenPayload {
-    if (token === undefined) throw new Error('Missing authorization header');
+    if (token === undefined) throw new SiteAuthError('Missing authorization header');
 
     if (token.startsWith('bearer ')) token = token.slice('bearer '.length);
 
     const payload = verify(token, config.jwtSecret);
 
     if (typeof payload === 'string') {
-        throw new Error('Token has invalid payload type (got string, expected object)');
+        throw new SiteAuthError('Token has invalid payload type (got string, expected object)');
     }
 
-    if (payload.exp === undefined) throw new Error('Token lacks an expiration date');
+    if (payload.exp === undefined) throw new SiteAuthError('Token lacks an expiration date');
 
     if (payload['id'] === undefined || typeof payload['id'] !== 'string') {
-        throw new Error('No ID in payload');
+        throw new SiteAuthError('No ID in payload');
     }
 
     if (payload['refresh_token'] === undefined || typeof payload['refresh_token'] !== 'string') {
-        throw new Error('No refresh_token in payload');
+        throw new SiteAuthError('No refresh_token in payload');
     }
 
     return {
