@@ -1,12 +1,12 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
+import { Db } from 'mongodb';
 import apiSpec from '../../openapi.json';
 import { Config } from '../config';
 import { handleLogin, makeLoginLink } from '../handlers';
 import { corsMiddleware, rateLimitingMiddleware, validatorMiddleware, validatorErrorHandler } from '../middleware';
 
-export async function createApp(config: Config, isTestMode: boolean = true) {
+export function createApp(config: Config, db?: Db) {
     const app = express();
 
     app.set('trust proxy', config.numProxies);
@@ -20,8 +20,8 @@ export async function createApp(config: Config, isTestMode: boolean = true) {
     app.use(express.json());
     app.use(corsMiddleware(config));
     app.use(rateLimitingMiddleware(config));
-    app.use(validatorMiddleware());
-    app.use(validatorErrorHandler());
+    app.use(validatorMiddleware(config));
+    app.use(validatorErrorHandler(config));
 
     // setting up routes
     app.get('/', (_req, res) =>
@@ -32,19 +32,8 @@ export async function createApp(config: Config, isTestMode: boolean = true) {
         }),
     );
 
-    app.post('/login', handleLogin(config));
-    app.get('/makeLoginLink', makeLoginLink(config));
-
-    // connecting to MongoDB
-    if (config.mongoURI !== 'test mongo URI') {
-        if (isTestMode) {
-            await mongoose.connect(config.mongoURI, { dbName: config.mongoDbName });
-        } else {
-            mongoose.connect(config.mongoURI, { dbName: config.mongoDbName }).then(() => {
-                console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
-            });
-        }
-    }
+    app.post('/login', handleLogin(config, db));
+    app.get('/makeLoginLink', makeLoginLink(config, db));
 
     return app;
 }
