@@ -90,8 +90,24 @@
                     "200": {
                         "$ref": "#/components/responses/LoginResponse"
                     },
+                    "400": {
+                        "description": "Error information regarding supplied code or redirect URI.",
+                        "content": {
+                            "text/html": {
+                                "example": "Invalid code or redirect URI."
+                            }
+                        }
+                    },
                     "429": {
                         "$ref": "#/components/responses/RateLimitResponse"
+                    },
+                    "500": {
+                        "description": "Error information regarding server-made requests.",
+                        "content": {
+                            "text/html": {
+                                "example": "Failed to get Discord user info."
+                            }
+                        }
                     }
                 }
             }
