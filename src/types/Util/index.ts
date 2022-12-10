@@ -1,1 +1,1 @@
-export * from './TypedRequestHandler';
+export * from './ExpressUtil';
