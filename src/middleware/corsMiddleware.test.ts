@@ -1,15 +1,10 @@
-import request, { SuperTest, Test } from 'supertest';
+import request from 'supertest';
 import { createApp } from '../app';
 import { mockConfig } from '../config';
 
 describe('corsMiddleware', () => {
     describe('wildcard [] whitelist', () => {
-        let app: SuperTest<Test>;
-
-        beforeAll(async () => {
-            const config = mockConfig({ clientUrls: [] });
-            app = request(await createApp(config));
-        });
+        const app = request(createApp(mockConfig({ clientUrls: [] })));
 
         it('always allows undefined origin', async () => {
             const response = await app.get('/').send();
@@ -33,12 +28,7 @@ describe('corsMiddleware', () => {
     });
 
     describe('static whitelist', () => {
-        let app: SuperTest<Test>;
-
-        beforeAll(async () => {
-            const config = mockConfig({ clientUrls: ['https://example.com'] });
-            app = request(await createApp(config));
-        });
+        const app = request(createApp(mockConfig({ clientUrls: ['https://example.com'] })));
 
         it('always allows undefined origin', async () => {
             const response = await app.get('/').send();
