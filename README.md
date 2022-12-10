@@ -54,9 +54,8 @@ All done! You can now run scripts using `pnpm <script name>`, e.g. `pnpm start`.
 -   `express` Web framework the API uses.
 -   `express-openapi-validator` Ensures endpoints match their documentation.
 -   `express-rate-limit` Rate limits users of the API.
--   `image-size` ?
 -   `jsonwebtoken` Helps with user authorization.
--   `mongoose` Helps with MongoDB database interactions.
+-   `mongodb` Database interface.
 -   `swagger-ui-express` Framework for API documentation.
 
 # Production Build
