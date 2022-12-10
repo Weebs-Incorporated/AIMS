@@ -135,6 +135,34 @@
                 }
             }
         },
+        "/users/@me": {
+            "get": {
+                "tags": ["User Management"],
+                "description": "Gets the current user info.",
+                "security": [{ "siteToken": [] }, { "rateLimitBypassToken": [], "siteToken": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Current user info.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Token is valid but user couldn't be found in database. This may occur if the user's account was deleted while a session was ongoing, and logging out is encouraged."
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimitResponse"
+                    }
+                }
+            }
+        },
         "/spec": {
             "get": {
                 "tags": ["Other"],
@@ -288,6 +316,22 @@
                         }
                     }
                 }
+            },
+            "Unauthenticated": {
+                "description": "Invalid or missing bearer token in `Authorization` header.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "jwt malformed"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {
@@ -309,6 +353,10 @@
         {
             "name": "Login Process",
             "description": "Operations for logging into the site via Discord, logging out, and refreshing."
+        },
+        {
+            "name": "User Management",
+            "description": "Operations for managing the current user, or other users."
         },
         {
             "name": "Other",

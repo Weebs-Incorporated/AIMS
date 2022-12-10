@@ -3,8 +3,14 @@ import swaggerUi from 'swagger-ui-express';
 import { Db } from 'mongodb';
 import apiSpec from '../../openapi.json';
 import { Config } from '../config';
-import { handleLogin, makeLoginLink } from '../handlers';
-import { corsMiddleware, rateLimitingMiddleware, validatorMiddleware, validatorErrorHandler } from '../middleware';
+import { getMe, handleLogin, makeLoginLink } from '../handlers';
+import {
+    corsMiddleware,
+    rateLimitingMiddleware,
+    validatorMiddleware,
+    validatorErrorHandler,
+    authErrorHandler,
+} from '../middleware';
 
 export function createApp(config: Config, db?: Db) {
     const app = express();
@@ -34,6 +40,10 @@ export function createApp(config: Config, db?: Db) {
 
     app.post('/login', handleLogin(config, db));
     app.get('/makeLoginLink', makeLoginLink(config, db));
+
+    app.get('/users/@me', getMe(config, db));
+
+    app.use(authErrorHandler(config));
 
     return app;
 }
