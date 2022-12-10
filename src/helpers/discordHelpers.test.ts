@@ -1,12 +1,22 @@
+import axios from 'axios';
 import { mockConfig } from '../config';
-import { makeAuthorizationLink } from './discordHelpers';
+import { getAccessToken, getUserInfo, makeAuthorizationLink, refreshAccessToken, revokeToken } from './discordHelpers';
+
+jest.mock('axios');
+
+const mockedAxios = jest.mocked(axios);
 
 describe('discordHelpers', () => {
+    afterEach(() => {
+        jest.resetAllMocks();
+    });
+
     describe('makeAuthorizationLink', () => {
         it('makes a valid link given a client ID', () => {
             const config = mockConfig();
 
             const link = makeAuthorizationLink(config, 'https://example.com');
+
             // slice at end to remove the trailing '='
             expect(link).toContain(new URLSearchParams(config.discordClientId).toString().slice(0, -1));
             expect(link).toContain(encodeURIComponent('https://example.com'));
@@ -21,6 +31,50 @@ describe('discordHelpers', () => {
 
             expect(state1).not.toBeNull();
             expect(state1).not.toBe(state2);
+        });
+    });
+
+    describe('getAccessToken', () => {
+        it('makes a request to the Discord OAuth endpoint', async () => {
+            mockedAxios.post.mockResolvedValueOnce({ data: 'test response' });
+            const res = await getAccessToken(mockConfig(), 'test auth code', 'test redirect uri');
+
+            expect(res).toBe('test response');
+
+            expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('refreshAccessToken', () => {
+        it('makes a request to the Discord OAuth endpoint', async () => {
+            mockedAxios.post.mockResolvedValueOnce({ data: 'test response' });
+            const res = await refreshAccessToken(mockConfig(), 'test refresh token');
+
+            expect(res).toBe('test response');
+
+            expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('revokeToken', () => {
+        it('makes a request to the Discord OAuth endpoint', async () => {
+            mockedAxios.post.mockResolvedValueOnce({ data: 'test response' });
+            const res = await revokeToken(mockConfig(), 'test access token');
+
+            expect(res).toBeUndefined();
+
+            expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getUserInfo', () => {
+        it('makes a request to the Discord User endpoint', async () => {
+            mockedAxios.get.mockResolvedValueOnce({ data: 'test user' });
+            const res = await getUserInfo('test access token');
+
+            expect(res).toBe('test user');
+
+            expect(mockedAxios.get).toHaveBeenCalledTimes(1);
         });
     });
 });
