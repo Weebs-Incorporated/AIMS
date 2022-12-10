@@ -36,7 +36,7 @@ export class SiteAuthError extends Error {}
 export function validateSiteToken(config: Config, token: string | undefined): SiteTokenPayload {
     if (token === undefined) throw new SiteAuthError('Missing authorization header');
 
-    if (token.startsWith('bearer ')) token = token.slice('bearer '.length);
+    if (token.toLowerCase().startsWith('bearer ')) token = token.slice('bearer '.length);
 
     const payload = verify(token, config.jwtSecret);
 
