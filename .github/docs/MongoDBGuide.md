@@ -35,13 +35,3 @@ For instance, in this example the final URL would be:
 `mongodb+srv://exampleUser:examplePassword@cluster0.vqhbsse.mongodb.net/?retryWrites=true&w=majority`
 
 Now you can paste the URL into `config.json`, done!
-
-# Using MongoDB in GitHub Workflows
-
-If you're running a fork of the repository, you'll likely see that the Node.js CI workflow is failing.
-
-This is because some of the API tests try to connect with MongoDB, using the environment variables `MONGODB_DB_NAME` and `MONGODB_URI`.
-
-To make your workflow succeed, set your repository action secrets to valid values for these.
-
-![image](../images/MongoDB_7.png)
