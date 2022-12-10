@@ -1,5 +1,5 @@
 import { RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { Config } from '../config';
 
 /** What is stored in a site token. */
@@ -36,20 +36,13 @@ export function validateSiteToken(config: Config, token: string | undefined): Si
 
     if (token.startsWith('bearer ')) token = token.slice('bearer '.length);
 
-    let payload: JwtPayload | string;
-
-    try {
-        payload = verify(token, config.jwtSecret);
-    } catch (error) {
-        throw new Error('Unable to verify token (was it signed with a different secret key?)');
-    }
+    const payload = verify(token, config.jwtSecret);
 
     if (typeof payload === 'string') {
         throw new Error('Token has invalid payload type (got string, expected object)');
     }
-    if (payload.exp === undefined) throw new Error('Token lacks an expiration date');
 
-    if (payload.exp * 1000 < Date.now()) throw new Error('Token expired');
+    if (payload.exp === undefined) throw new Error('Token lacks an expiration date');
 
     if (payload['id'] === undefined || typeof payload['id'] !== 'string') {
         throw new Error('No ID in payload');
