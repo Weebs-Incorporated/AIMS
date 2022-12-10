@@ -145,8 +145,8 @@ describe('POST /login', () => {
             if (updatedUser === null) fail('should have updated a user');
 
             expect(updatedUser).toEqual(res.body.userData);
-            expect(updatedUser.lastLoginOrRefresh).not.toEqual(startingUser.lastLoginOrRefresh);
-            expect(updatedUser.registered).toEqual(startingUser.registered);
+            expect(updatedUser.lastLoginOrRefresh).not.toBe(startingUser.lastLoginOrRefresh);
+            expect(updatedUser.registered).toBe(startingUser.registered);
         });
     });
 });
