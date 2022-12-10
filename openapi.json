@@ -29,6 +29,7 @@
             "get": {
                 "tags": ["Other"],
                 "description": "Returns API information.",
+                "security": [{}, { "rateLimitBypassToken": [] }],
                 "responses": {
                     "200": {
                         "description": "Version, start time, and request received time.",
@@ -53,6 +54,9 @@
                                 }
                             }
                         }
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimitResponse"
                     }
                 }
             }
@@ -61,6 +65,7 @@
             "post": {
                 "tags": ["Login Process"],
                 "description": "Completes the Discord OAuth2 login process, returning a site access token.",
+                "security": [{}, { "rateLimitBypassToken": [] }],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -84,6 +89,9 @@
                 "responses": {
                     "200": {
                         "$ref": "#/components/responses/LoginResponse"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimitResponse"
                     }
                 }
             }
@@ -91,7 +99,8 @@
         "/makeLoginLink": {
             "get": {
                 "tags": ["Login Process"],
-                "description": "Generates an Discord OAuth2 authorization URL.\nThis should be used for testing purposes only, as client-side generations of this are possible and [more secure](https://discord.com/developers/docs/topics/oauth2#state-and-security).",
+                "description": "Generates an Discord OAuth2 authorization URL. This should be used for testing purposes only, as client-side generations of this are possible and [more secure](https://discord.com/developers/docs/topics/oauth2#state-and-security).",
+                "security": [{}, { "rateLimitBypassToken": [] }],
                 "responses": {
                     "200": {
                         "description": "Authorization URL.",
@@ -103,6 +112,9 @@
                                 }
                             }
                         }
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimitResponse"
                     }
                 }
             }
@@ -111,6 +123,7 @@
             "get": {
                 "tags": ["Other"],
                 "description": "Returns underlying API spec.",
+                "security": [],
                 "responses": {
                     "200": {
                         "description": "API spec in JSON form."
@@ -121,6 +134,7 @@
         "/api-docs": {
             "get": {
                 "tags": ["Other"],
+                "security": [],
                 "responses": {
                     "200": {
                         "description": "This document."
@@ -225,6 +239,53 @@
                         }
                     }
                 }
+            },
+            "RateLimitResponse": {
+                "description": "Too many requests, rate limited.",
+                "headers": {
+                    "RateLimit-Limit": {
+                        "required": true,
+                        "description": "Maximum number of requests per time window.",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "RateLimit-Remaining": {
+                        "required": true,
+                        "description": "Number of requests remaining in this time window.",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "RateLimit-Reset": {
+                        "required": true,
+                        "description": "Number of seconds until this time window ends.",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "Retry-After": {
+                        "required": true,
+                        "description": "Length of time window in seconds.",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "siteToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT signed by server, contains Discord refresh token and user ID."
+            },
+            "rateLimitBypassToken": {
+                "type": "apiKey",
+                "description": "Token for bypassing rate limits.",
+                "name": "RateLimit-Bypass-Token",
+                "in": "header"
             }
         }
     },
