@@ -55,6 +55,12 @@ describe('POST /login', () => {
         await mongoProvider.stop();
     });
 
+    it('returns status code 501 if no Mongo database is provided', async () => {
+        const req = await request(createApp(mockConfig())).post('/login').send(testBody);
+
+        expect(req.statusCode).toBe(501);
+    });
+
     it('returns status code 400 for invalid codes or redirect URIs', async () => {
         mockedGetAccessToken.mockImplementationOnce(() => {
             throw new Error();
