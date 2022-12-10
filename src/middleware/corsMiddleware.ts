@@ -1,7 +1,8 @@
 import cors from 'cors';
-import Config from '../config';
+import { Config } from '../config';
+import { MiddlewareProvider } from '../types';
 
-export default function corsMiddleware(config: Config) {
+export const corsMiddleware: MiddlewareProvider = (config: Config) => {
     const whitelist = new Set(config.clientUrls);
 
     return cors({
@@ -21,4 +22,4 @@ export default function corsMiddleware(config: Config) {
             'RateLimit-Bypass-Response',
         ],
     });
-}
+};

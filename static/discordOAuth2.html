@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h2>Query Parameters:</h2>
+        <p id="qCode">Code: n/a</p>
+        <p id="qState">State: n/a</p>
+        <div id="qHidden" style="visibility: hidden">
+            <p>
+                You can now send a POST request with the code to the <b>/login</b> endpoint to upgrade to an access
+                token.
+            </p>
+            <br />
+            <p>
+                See the <a href="../api-docs/#/Login%20Process/post_login" target="_blank">API docs</a> for more info.
+            </p>
+        </div>
+        <script defer>
+            const params = new URLSearchParams(window.location.search);
+
+            const code = params.get('code');
+            const state = params.get('state');
+
+            document.querySelector('#qCode').innerText = `Code: ${code ?? 'n/a'}`;
+            document.querySelector('#qState').innerText = `State: ${state ?? 'n/a'}`;
+
+            if (code) {
+                document.querySelector('#qHidden').style.visibility = 'visible';
+            }
+        </script>
+    </body>
+</html>

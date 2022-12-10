@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css"
+        />
+    </head>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css"
+    />
+    <body>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"
+            integrity="sha384-y998j0w+cOeHjdSNGsL3hnvm+lFlNBHvX+s7DRUlDNd6haj2ucIwtOrdX4nSMewo"
+            crossorigin="anonymous"
+        ></script>
+        <style>
+            body {
+                background-color: #282c34;
+                font-size: 16pt;
+            }
+        </style>
+        <script>
+            hljs.highlightAll();
+        </script>
+        <pre>
+    <code>
+        import { OAuth2Routes, OAuth2Scopes } from 'discord-api-types/v10';
+        import { randomBytes } from 'crypto';
+        
+        // example scopes, we actually only require identify
+        const SCOPES: OAuth2Scopes[] = [OAuth2Scopes.Guilds, OAuth2Scopes.Identify];
+        
+        /** Creates an example Discord OAuth2 authorization link.*/
+        export function discordLoginExample(clientId: string, redirectUri: string): string {
+            const state = randomBytes(16).toString(`hex`);
+        
+            const params = new URLSearchParams();
+            params.set(`response_type`, `code`);
+            params.set(`client_id`, clientId);
+            params.set(`state`, state);
+            params.set(`redirect_uri`, redirectUri);
+            params.set(`prompt`, `consent`);
+            params.set(`scope`, SCOPES.join(` `));
+        
+            return `${OAuth2Routes.authorizationURL}?${params.toString()}`;
+        }
+    </code>
+</pre>
+    </body>
+</html>

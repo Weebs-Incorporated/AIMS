@@ -57,6 +57,56 @@
                 }
             }
         },
+        "/login": {
+            "post": {
+                "tags": ["Login Process"],
+                "description": "Completes the Discord OAuth2 login process, returning a site access token.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": ["code", "redirect_uri"],
+                                "additionalProperties": false,
+                                "description": "OAuth2 payload given by Discord.",
+                                "properties": {
+                                    "code": {
+                                        "type": "string"
+                                    },
+                                    "redirect_uri": {
+                                        "type": "string",
+                                        "example": "http://localhost:5000/static/discordOAuth2"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/LoginResponse"
+                    }
+                }
+            }
+        },
+        "/makeLoginLink": {
+            "get": {
+                "tags": ["Login Process"],
+                "description": "Generates an Discord OAuth2 authorization URL.\nThis should be used for testing purposes only, as client-side generations of this are possible and [more secure](https://discord.com/developers/docs/topics/oauth2#state-and-security).",
+                "responses": {
+                    "200": {
+                        "description": "Authorization URL.",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://discord.com/api/v10/oauth2/authorize?client_id=01234567890&state=abcdefg&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Flogin&prompt=consent&scope=identify"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/spec": {
             "get": {
                 "tags": ["Other"],
@@ -84,10 +134,105 @@
             "ISOString": {
                 "type": "string",
                 "example": "2022-11-08T02:20:08.190Z"
+            },
+            "User": {
+                "type": "object",
+                "required": [
+                    "_id",
+                    "username",
+                    "discriminator",
+                    "avatar",
+                    "latestIp",
+                    "permissions",
+                    "registered",
+                    "lastLoginOrRefresh",
+                    "posts",
+                    "comments"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "discriminator": {
+                        "type": "string"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "latestIp": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Only shown if the requesting user is this one or the site owner."
+                    },
+                    "permissions": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "registered": {
+                        "$ref": "#/components/schemas/ISOString"
+                    },
+                    "lastLoginOrRefresh": {
+                        "$ref": "#/components/schemas/ISOString"
+                    },
+                    "posts": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "comments": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            }
+        },
+        "responses": {
+            "LoginResponse": {
+                "description": "Successful login/register/refresh payload.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["userData", "refreshToken", "expiresInSeconds", "siteToken", "type"],
+                            "additionalProperties": false,
+                            "properties": {
+                                "userData": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "refreshToken": {
+                                    "type": "string",
+                                    "description": "Token to use for extending this user's current session."
+                                },
+                                "expiresInSeconds": {
+                                    "type": "integer",
+                                    "default": 604800,
+                                    "description": "How long until the current siteToken expires, in seconds."
+                                },
+                                "siteToken": {
+                                    "type": "string",
+                                    "description": "Signed JWT to send in `Authorization` header for any elevated requests to this API."
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "Type of operation this was generated from.",
+                                    "enum": ["login", "register", "refresh"]
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
     "tags": [
+        {
+            "name": "Login Process",
+            "description": "Operations for logging into the site via Discord, logging out, and refreshing."
+        },
         {
             "name": "Other",
             "description": "Miscellaneous operations."

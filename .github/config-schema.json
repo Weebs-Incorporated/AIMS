@@ -61,13 +61,17 @@
             "examples": ["super_secret_string"],
             "description": "String to sign JSON Web Tokens with, should not be easy to guess."
         },
-        "jwtDuration": {
-            "type": ["string", "number"],
-            "examples": ["7d", "2 days", "10h"],
-            "default": "7d",
-            "description": "How long sessions should last for before needing a refresh.\nExpressed in seconds or a string describing a time span (zeit/ms)."
+        "discordClientId": {
+            "type": "string",
+            "examples": ["10503..."],
+            "description": "OAuth2 client ID of your Discord application."
+        },
+        "discordClientSecret": {
+            "type": "string",
+            "examples": ["2ABC..."],
+            "description": "OAuth2 client secret of your Discord application."
         }
     },
     "additionalProperties": false,
-    "required": ["mongoURI"]
+    "required": ["mongoURI", "discordClientId", "discordClientSecret"]
 }

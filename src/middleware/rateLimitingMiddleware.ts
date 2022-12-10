@@ -1,8 +1,10 @@
 import rateLimit from 'express-rate-limit';
-import Config from '../config';
+import { Config } from '../config';
+import { MiddlewareProvider } from '../types';
 
-export default function rateLimitingMiddleware(config: Config) {
+export const rateLimitingMiddleware: MiddlewareProvider = (config: Config) => {
     const bypassTokens = new Set(config.rateLimitBypassTokens);
+
     return rateLimit({
         windowMs: 60 * 1000,
         max: config.maxRequestsPerMinute,
@@ -21,4 +23,4 @@ export default function rateLimitingMiddleware(config: Config) {
             return true;
         },
     });
-}
+};
