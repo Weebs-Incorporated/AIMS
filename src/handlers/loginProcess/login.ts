@@ -1,12 +1,15 @@
 import { RESTPostOAuth2AccessTokenResult, APIUser } from 'discord-api-types/v10';
-import { Config } from '../../config';
 import { getAccessToken, getUserInfo, makeSiteToken } from '../../helpers';
-import { UserModel } from '../../models';
-import { TypedRequestHandler, LoginResponse, User, UserPermissions } from '../../types';
+import { LoginResponse, User, UserPermissions, EndpointProvider } from '../../types';
 
-export function handleLogin(
-    config: Config,
-): TypedRequestHandler<{ code: string; redirect_uri: string }, LoginResponse | string> {
+export const handleLogin: EndpointProvider<{ code: string; redirect_uri: string }, LoginResponse | string> = (
+    config,
+    db,
+) => {
+    if (db === undefined) return (_req, res) => res.sendStatus(501);
+
+    const collection = db.collection<User>('users');
+
     return async (req, res) => {
         const { code, redirect_uri } = req.body;
 
@@ -33,13 +36,13 @@ export function handleLogin(
         }
 
         // get existing user if present
-        const fetchedUser = await UserModel.findById<User>(discordUser.id);
+        const fetchedUser = await collection.findOne({ _id: discordUser.id });
         let userData: User;
 
         const now = new Date().toISOString();
 
         /** Information to be applied on login or refresh. */
-        const baseUserInfo = {
+        const updatedUserInfo = {
             username: discordUser.username,
             discriminator: discordUser.discriminator,
             avatar: discordUser.avatar,
@@ -50,34 +53,24 @@ export function handleLogin(
         if (fetchedUser === null) {
             // no existing user, so is registering
             const newUser: User = {
-                ...baseUserInfo,
+                ...updatedUserInfo,
                 _id: discordUser.id,
                 permissions: UserPermissions.Comment,
                 registered: now,
                 posts: 0,
                 comments: 0,
             };
-            await UserModel.create(newUser);
+            await collection.insertOne(newUser);
             userData = newUser;
             type = 'register';
         } else {
             // existing user, so is logging in
-            const updatedUser: User = {
-                _id: fetchedUser._id,
-                permissions: fetchedUser.permissions,
-                registered: fetchedUser.registered,
-                posts: fetchedUser.posts,
-                comments: fetchedUser.comments,
-                ...baseUserInfo,
-            };
-            await UserModel.findByIdAndUpdate(discordUser.id, updatedUser);
-            userData = updatedUser;
+            await collection.updateOne({ _id: discordUser.id }, { $set: updatedUserInfo });
+            userData = { ...fetchedUser, ...updatedUserInfo };
             type = 'login';
         }
 
         const siteToken = makeSiteToken(config, discordAuth, discordUser.id);
-
-        console.log(userData);
 
         return res.status(200).json({
             userData,
@@ -87,4 +80,4 @@ export function handleLogin(
             type,
         });
     };
-}
+};

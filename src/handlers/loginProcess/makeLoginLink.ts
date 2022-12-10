@@ -1,8 +1,7 @@
-import { RequestHandler } from 'express';
-import { Config } from '../../config';
 import { makeAuthorizationLink } from '../../helpers';
+import { EndpointProvider } from '../../types';
 
-export function makeLoginLink(config: Config): RequestHandler {
+export const makeLoginLink: EndpointProvider<void, string> = (config) => {
     return (_req, res) =>
         res.status(200).send(makeAuthorizationLink(config, `http://localhost:${config.port}/static/discordOAuth2`));
-}
+};
