@@ -1,26 +1,18 @@
-import { RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
 import { JsonWebTokenError, sign, TokenExpiredError, verify } from 'jsonwebtoken';
 import { mockConfig } from '../config';
+import { mockedOAuthResult } from '../mocks';
 import { makeSiteToken, SiteAuthError, validateSiteToken } from './siteTokenHelpers';
 
 describe('siteTokenHelpers', () => {
-    const exampleAuth: RESTPostOAuth2AccessTokenResult = {
-        access_token: 'test access token',
-        expires_in: 604800,
-        refresh_token: 'test refresh token',
-        scope: 'test scope',
-        token_type: 'test token type',
-    };
-
     describe('makeSiteToken', () => {
         it('signs the payload correctly', () => {
             const config = mockConfig({ jwtSecret: 'test secret' });
 
-            const token = makeSiteToken(config, exampleAuth, 'test id');
+            const token = makeSiteToken(config, mockedOAuthResult, 'test id');
 
             expect(verify(token, config.jwtSecret)).toMatchObject({
                 id: 'test id',
-                refresh_token: exampleAuth.refresh_token,
+                refresh_token: mockedOAuthResult.refresh_token,
             });
         });
     });
