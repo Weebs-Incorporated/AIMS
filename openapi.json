@@ -56,7 +56,7 @@
                         }
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimitResponse"
+                        "$ref": "#/components/responses/RateLimited"
                     }
                 }
             }
@@ -79,7 +79,7 @@
                         }
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimitResponse"
+                        "$ref": "#/components/responses/RateLimited"
                     }
                 }
             }
@@ -122,7 +122,36 @@
                         }
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimitResponse"
+                        "$ref": "#/components/responses/RateLimited"
+                    },
+                    "500": {
+                        "description": "Error information regarding server-made requests.",
+                        "content": {
+                            "text/html": {
+                                "example": "Failed to get Discord user info."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "get": {
+                "tags": ["Login Process"],
+                "description": "Extends current session and refreshes Discord access token.",
+                "security": [{ "siteToken": [] }, { "rateLimitBypassToken": [], "siteToken": [] }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/LoginResponse"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/MissingUser"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimited"
                     },
                     "500": {
                         "description": "Error information regarding server-made requests.",
@@ -155,10 +184,10 @@
                         "$ref": "#/components/responses/Unauthenticated"
                     },
                     "404": {
-                        "description": "Token is valid but user couldn't be found in database. This may occur if the user's account was deleted while a session was ongoing, and logging out is encouraged."
+                        "$ref": "#/components/responses/MissingUser"
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimitResponse"
+                        "$ref": "#/components/responses/RateLimited"
                     }
                 }
             }
@@ -284,7 +313,7 @@
                     }
                 }
             },
-            "RateLimitResponse": {
+            "RateLimited": {
                 "description": "Too many requests, rate limited.",
                 "headers": {
                     "RateLimit-Limit": {
@@ -332,6 +361,9 @@
                         }
                     }
                 }
+            },
+            "MissingUser": {
+                "description": "Token is valid but user couldn't be found in database. This may occur if the user's account was deleted while a session was ongoing. Logging out is encouraged."
             }
         },
         "securitySchemes": {
