@@ -326,7 +326,7 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "jwt malformed"
+                                    "example": "Jwt malformed"
                                 }
                             }
                         }
