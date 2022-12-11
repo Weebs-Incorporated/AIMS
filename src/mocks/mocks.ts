@@ -1,4 +1,5 @@
 import { APIUser, RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
+import { User, UserPermissions } from '../types';
 
 export const mockedOAuthResult: RESTPostOAuth2AccessTokenResult = {
     access_token: 'test access token',
@@ -19,6 +20,19 @@ export const mockedOAuthResultNew: RESTPostOAuth2AccessTokenResult = {
 export const mockedAPIUser: APIUser = {
     id: 'test Discord user id',
     username: 'test Discord username',
-    discriminator: 'test discriminator',
+    discriminator: 'test Discord discriminator',
+    avatar: 'test Discord avatar',
+};
+
+export const mockedUser: User = {
+    _id: 'test user id',
+    username: 'test user id',
+    discriminator: 'test user discriminator',
     avatar: 'test avatar',
+    comments: 0,
+    posts: 0,
+    lastLoginOrRefresh: new Date().toISOString(),
+    latestIp: 'test user ip',
+    permissions: UserPermissions.Comment,
+    registered: new Date().toISOString(),
 };
