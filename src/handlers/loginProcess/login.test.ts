@@ -1,12 +1,12 @@
 import { Express } from 'express';
 import request from 'supertest';
+import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApp } from '../../app';
 import { mockConfig } from '../../config';
-import { APIUser, RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
 import { getAccessToken, getUserInfo, makeSiteToken } from '../../helpers';
-import { MongoClient } from 'mongodb';
-import { User, UserPermissions } from '../../types';
+import { User } from '../../types';
+import { mockedAPIUser, mockedOAuthResult, mockedUser } from '../../mocks';
 
 jest.mock('../../helpers');
 
@@ -19,22 +19,7 @@ describe('POST /login', () => {
     let mongoProvider: MongoMemoryServer;
     let mongoConsumer: MongoClient;
 
-    const testOAuthResult: RESTPostOAuth2AccessTokenResult = {
-        access_token: 'test access token',
-        expires_in: 604800,
-        refresh_token: 'test refresh token',
-        scope: 'test scope',
-        token_type: 'test token type',
-    };
-
-    const testUserInfoResult: APIUser = {
-        id: 'test /login id',
-        username: 'test username',
-        discriminator: 'test discriminator',
-        avatar: 'test avatar',
-    };
-
-    const testBody = {
+    const mockLoginBody = {
         code: 'test code',
         redirect_uri: 'test redirect uri',
     };
@@ -56,7 +41,7 @@ describe('POST /login', () => {
     });
 
     it('returns status code 501 if no Mongo database is provided', async () => {
-        const req = await request(createApp(mockConfig())).post('/login').send(testBody);
+        const req = await request(createApp(mockConfig())).post('/login').send(mockLoginBody);
 
         expect(req.statusCode).toBe(501);
     });
@@ -66,20 +51,24 @@ describe('POST /login', () => {
             throw new Error();
         });
 
-        const res = await request(app).post('/login').send(testBody);
+        const res = await request(app).post('/login').send(mockLoginBody);
 
         expect(res.statusCode).toBe(400);
     });
 
     it('returns status code 500 when failing to get Discord user info', async () => {
-        mockedGetAccessToken.mockResolvedValue(testOAuthResult);
+        mockedGetAccessToken.mockResolvedValue(mockedOAuthResult);
 
-        mockedGetUserInfo.mockResolvedValueOnce(null).mockImplementationOnce(() => {
-            throw new Error();
-        });
+        mockedGetUserInfo
+            // returns null when access token is invalid
+            .mockResolvedValueOnce(null)
+            // throws error when request fails to be made
+            .mockImplementationOnce(() => {
+                throw new Error();
+            });
 
-        const res1 = await request(app).post('/login').send(testBody);
-        const res2 = await request(app).post('/login').send(testBody);
+        const res1 = await request(app).post('/login').send(mockLoginBody);
+        const res2 = await request(app).post('/login').send(mockLoginBody);
 
         expect(res1.statusCode).toBe(500);
         expect(res2.statusCode).toBe(500);
@@ -91,8 +80,8 @@ describe('POST /login', () => {
 
     describe('user creation and updating', () => {
         beforeAll(() => {
-            mockedGetAccessToken.mockResolvedValue(testOAuthResult);
-            mockedGetUserInfo.mockResolvedValue(testUserInfoResult);
+            mockedGetAccessToken.mockResolvedValue(mockedOAuthResult);
+            mockedGetUserInfo.mockResolvedValue(mockedAPIUser);
             mockedMakeSiteToken.mockReturnValue('test site token');
         });
 
@@ -101,7 +90,7 @@ describe('POST /login', () => {
         });
 
         it('creates a new user', async () => {
-            const res = await request(app).post('/login').send(testBody);
+            const res = await request(app).post('/login').send(mockLoginBody);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.type).toBe('register');
@@ -117,22 +106,12 @@ describe('POST /login', () => {
         });
 
         it('updates an existing user', async () => {
-            const startingUser: User = {
-                username: testUserInfoResult.username,
-                discriminator: testUserInfoResult.discriminator,
-                avatar: testUserInfoResult.avatar,
-                _id: testUserInfoResult.id,
-                comments: 0,
-                posts: 0,
-                lastLoginOrRefresh: new Date().toISOString(),
-                latestIp: '123.456.789',
-                permissions: UserPermissions.Comment,
-                registered: new Date().toISOString(),
-            };
+            await mongoConsumer
+                .db()
+                .collection<User>('users')
+                .insertOne({ ...mockedUser, _id: 'test Discord user id' });
 
-            await mongoConsumer.db().collection<User>('users').insertOne(startingUser);
-
-            const res = await request(app).post('/login').send(testBody);
+            const res = await request(app).post('/login').send(mockLoginBody);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.type).toBe('login');
@@ -145,8 +124,8 @@ describe('POST /login', () => {
             if (updatedUser === null) fail('should have updated a user');
 
             expect(updatedUser).toEqual(res.body.userData);
-            expect(updatedUser.lastLoginOrRefresh).not.toBe(startingUser.lastLoginOrRefresh);
-            expect(updatedUser.registered).toBe(startingUser.registered);
+            expect(updatedUser.lastLoginOrRefresh).not.toBe(mockedUser.lastLoginOrRefresh);
+            expect(updatedUser.registered).toBe(mockedUser.registered);
         });
     });
 });
