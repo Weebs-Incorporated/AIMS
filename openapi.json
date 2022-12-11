@@ -56,7 +56,7 @@
                         }
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimited"
+                        "$ref": "#/components/responses/RateLimited429"
                     }
                 }
             }
@@ -79,7 +79,7 @@
                         }
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimited"
+                        "$ref": "#/components/responses/RateLimited429"
                     }
                 }
             }
@@ -111,7 +111,7 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/LoginResponse"
+                        "$ref": "#/components/responses/LoginResponse200"
                     },
                     "400": {
                         "description": "Error information regarding supplied code or redirect URI.",
@@ -122,7 +122,7 @@
                         }
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimited"
+                        "$ref": "#/components/responses/RateLimited429"
                     },
                     "500": {
                         "description": "Error information regarding server-made requests.",
@@ -142,16 +142,16 @@
                 "security": [{ "siteToken": [] }, { "rateLimitBypassToken": [], "siteToken": [] }],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/LoginResponse"
+                        "$ref": "#/components/responses/LoginResponse200"
                     },
                     "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
+                        "$ref": "#/components/responses/Unauthenticated401"
                     },
                     "404": {
-                        "$ref": "#/components/responses/MissingUser"
+                        "$ref": "#/components/responses/MissingUser404"
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimited"
+                        "$ref": "#/components/responses/RateLimited429"
                     },
                     "500": {
                         "description": "Error information regarding server-made requests.",
@@ -181,13 +181,13 @@
                         }
                     },
                     "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
+                        "$ref": "#/components/responses/Unauthenticated401"
                     },
                     "404": {
-                        "$ref": "#/components/responses/MissingUser"
+                        "$ref": "#/components/responses/MissingUser404"
                     },
                     "429": {
-                        "$ref": "#/components/responses/RateLimited"
+                        "$ref": "#/components/responses/RateLimited429"
                     }
                 }
             }
@@ -278,7 +278,7 @@
             }
         },
         "responses": {
-            "LoginResponse": {
+            "LoginResponse200": {
                 "description": "Successful login/register/refresh payload.",
                 "content": {
                     "application/json": {
@@ -313,7 +313,7 @@
                     }
                 }
             },
-            "RateLimited": {
+            "RateLimited429": {
                 "description": "Too many requests, rate limited.",
                 "headers": {
                     "RateLimit-Limit": {
@@ -346,7 +346,7 @@
                     }
                 }
             },
-            "Unauthenticated": {
+            "Unauthenticated401": {
                 "description": "Invalid or missing bearer token in `Authorization` header.",
                 "content": {
                     "application/json": {
@@ -362,8 +362,11 @@
                     }
                 }
             },
-            "MissingUser": {
+            "MissingUser404": {
                 "description": "Token is valid but user couldn't be found in database. This may occur if the user's account was deleted while a session was ongoing. Logging out is encouraged."
+            },
+            "NotImplemented501": {
+                "description": "This endpoint requires a database, which has not been configured or provided to the handler."
             }
         },
         "securitySchemes": {
