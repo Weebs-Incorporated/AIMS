@@ -61,6 +61,29 @@
                 }
             }
         },
+        "/makeLoginLink": {
+            "get": {
+                "tags": ["Login Process"],
+                "description": "Generates an Discord OAuth2 authorization URL. This should be used for testing purposes only, as client-side generations of this are possible and [more secure](https://discord.com/developers/docs/topics/oauth2#state-and-security).",
+                "security": [{}, { "rateLimitBypassToken": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Authorization URL.",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://discord.com/api/v10/oauth2/authorize?client_id=01234567890&state=abcdefg&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Flogin&prompt=consent&scope=identify"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimitResponse"
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "tags": ["Login Process"],
@@ -108,29 +131,6 @@
                                 "example": "Failed to get Discord user info."
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/makeLoginLink": {
-            "get": {
-                "tags": ["Login Process"],
-                "description": "Generates an Discord OAuth2 authorization URL. This should be used for testing purposes only, as client-side generations of this are possible and [more secure](https://discord.com/developers/docs/topics/oauth2#state-and-security).",
-                "security": [{}, { "rateLimitBypassToken": [] }],
-                "responses": {
-                    "200": {
-                        "description": "Authorization URL.",
-                        "content": {
-                            "text/html": {
-                                "schema": {
-                                    "type": "string",
-                                    "example": "https://discord.com/api/v10/oauth2/authorize?client_id=01234567890&state=abcdefg&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Flogin&prompt=consent&scope=identify"
-                                }
-                            }
-                        }
-                    },
-                    "429": {
-                        "$ref": "#/components/responses/RateLimitResponse"
                     }
                 }
             }
