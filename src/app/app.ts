@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import { Db } from 'mongodb';
 import apiSpec from '../../openapi.json';
 import { Config } from '../config';
-import { getMe, handleLogin, makeLoginLink } from '../handlers';
+import { getMe, handleLogin, handleRefresh, makeLoginLink } from '../handlers';
 import {
     corsMiddleware,
     rateLimitingMiddleware,
@@ -38,8 +38,9 @@ export function createApp(config: Config, db?: Db) {
         }),
     );
 
-    app.post('/login', handleLogin(config, db));
     app.get('/makeLoginLink', makeLoginLink(config, db));
+    app.post('/login', handleLogin(config, db));
+    app.get('/refresh', handleRefresh(config, db));
 
     app.get('/users/@me', getMe(config, db));
 
