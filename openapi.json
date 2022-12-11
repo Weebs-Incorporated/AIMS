@@ -131,6 +131,9 @@
                                 "example": "Failed to get Discord user info."
                             }
                         }
+                    },
+                    "501": {
+                        "$ref": "#/components/responses/NotImplemented501"
                     }
                 }
             }
@@ -160,6 +163,9 @@
                                 "example": "Failed to get Discord user info."
                             }
                         }
+                    },
+                    "501": {
+                        "$ref": "#/components/responses/NotImplemented501"
                     }
                 }
             }
