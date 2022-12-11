@@ -65,7 +65,7 @@ export const handleLogin: EndpointProvider<{ code: string; redirect_uri: string 
             type = 'register';
         } else {
             // existing user, so is logging in
-            await collection.updateOne({ _id: discordUser.id }, { $set: updatedUserInfo });
+            await collection.updateOne({ _id: fetchedUser._id }, { $set: updatedUserInfo });
             userData = { ...fetchedUser, ...updatedUserInfo };
             type = 'login';
         }
