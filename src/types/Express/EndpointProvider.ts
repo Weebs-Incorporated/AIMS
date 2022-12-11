@@ -3,7 +3,7 @@ import { Db } from 'mongodb';
 import { Config } from '../../config';
 import { ResponseLocals } from './ResponseLocals';
 
-export type EndpointProvider<TRequest, TResponse> = (
+export type EndpointProvider<TRequest = never, TResponse = never> = (
     config: Config,
     db?: Db,
 ) => RequestHandler<object, TResponse, TRequest, object, ResponseLocals>;
