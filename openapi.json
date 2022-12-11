@@ -147,6 +147,9 @@
                     "200": {
                         "$ref": "#/components/responses/LoginResponse200"
                     },
+                    "400": {
+                        "description": "Refresh token (in site token) is invalid or expired. A refresh is no longer feasible and the user needs to manually log back in."
+                    },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated401"
                     },
