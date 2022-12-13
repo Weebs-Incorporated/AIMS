@@ -1,6 +1,6 @@
 import { JsonWebTokenError, sign, TokenExpiredError, verify } from 'jsonwebtoken';
 import { mockConfig } from '../config';
-import { mockedOAuthResult } from '../mocks';
+import { mockedOAuthResult } from '../testing';
 import { makeSiteToken, SiteAuthError, validateSiteToken } from './siteTokenHelpers';
 
 describe('siteTokenHelpers', () => {

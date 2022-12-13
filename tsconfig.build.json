@@ -4,5 +4,5 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true
     },
-    "exclude": ["**/*.test.ts"]
+    "exclude": ["**/*.test.ts", "**/testing/**"]
 }

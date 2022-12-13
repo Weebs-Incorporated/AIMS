@@ -1,12 +1,16 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { MongoClient } from 'mongodb';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApp } from '../../app';
 import { mockConfig } from '../../config';
 import { getAccessToken, getUserInfo, makeSiteToken } from '../../helpers';
-import { User } from '../../types';
-import { mockedAPIUser, mockedOAuthResult, mockedUser } from '../../mocks';
+import {
+    createTestDatabase,
+    mockedAPIUser,
+    mockedLoginBody,
+    mockedOAuthResult,
+    mockedUser,
+    TestDatabase,
+} from '../../testing';
 
 jest.mock('../../helpers');
 
@@ -16,42 +20,29 @@ const mockedMakeSiteToken = jest.mocked(makeSiteToken);
 
 describe('POST /login', () => {
     let app: Express;
-    let mongoProvider: MongoMemoryServer;
-    let mongoConsumer: MongoClient;
-
-    const mockLoginBody = {
-        code: 'test code',
-        redirect_uri: 'test redirect uri',
-    };
+    let testDatabase: TestDatabase;
 
     beforeAll(async () => {
-        mongoProvider = await MongoMemoryServer.create();
-        const mongoURI = mongoProvider.getUri();
-        mongoConsumer = new MongoClient(mongoURI);
-        await mongoConsumer.connect();
-
-        const db = mongoConsumer.db();
-
-        app = createApp(mockConfig({ mongoURI }), db);
+        testDatabase = await createTestDatabase();
+        app = createApp(mockConfig(), testDatabase.db);
     });
 
     afterAll(async () => {
-        await mongoConsumer.close();
-        await mongoProvider.stop();
+        await testDatabase.shutdown();
     });
 
-    it('returns status code 501 if no Mongo database is provided', async () => {
-        const req = await request(createApp(mockConfig())).post('/login').send(mockLoginBody);
+    // it('returns status code 501 if no Mongo database is provided', async () => {
+    //     const req = await request(app).post('/login').send(mockedLoginBody);
 
-        expect(req.statusCode).toBe(501);
-    });
+    //     expect(req.statusCode).toBe(501);
+    // });
 
     it('returns status code 400 for invalid codes or redirect URIs', async () => {
         mockedGetAccessToken.mockImplementationOnce(() => {
             throw new Error();
         });
 
-        const res = await request(app).post('/login').send(mockLoginBody);
+        const res = await request(app).post('/login').send(mockedLoginBody);
 
         expect(res.statusCode).toBe(400);
     });
@@ -67,8 +58,8 @@ describe('POST /login', () => {
                 throw new Error();
             });
 
-        const res1 = await request(app).post('/login').send(mockLoginBody);
-        const res2 = await request(app).post('/login').send(mockLoginBody);
+        const res1 = await request(app).post('/login').send(mockedLoginBody);
+        const res2 = await request(app).post('/login').send(mockedLoginBody);
 
         expect(res1.statusCode).toBe(500);
         expect(res2.statusCode).toBe(500);
@@ -81,24 +72,21 @@ describe('POST /login', () => {
     describe('user creation and updating', () => {
         beforeAll(() => {
             mockedGetAccessToken.mockResolvedValue(mockedOAuthResult);
-            mockedGetUserInfo.mockResolvedValue(mockedAPIUser);
+            mockedGetUserInfo.mockResolvedValue({ ...mockedAPIUser, id: 'test /login user id' });
             mockedMakeSiteToken.mockReturnValue('test site token');
         });
 
         afterEach(async () => {
-            await mongoConsumer.db().collection<User>('users').deleteMany({});
+            await testDatabase.db.users.deleteMany({});
         });
 
         it('creates a new user', async () => {
-            const res = await request(app).post('/login').send(mockLoginBody);
+            const res = await request(app).post('/login').send(mockedLoginBody);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.type).toBe('register');
 
-            const createdUser = await mongoConsumer
-                .db()
-                .collection('users')
-                .findOne<User>({ _id: res.body.userData._id });
+            const createdUser = await testDatabase.db.users.findOne({ _id: res.body.userData._id });
 
             if (createdUser === null) fail('should have created a user');
 
@@ -106,20 +94,14 @@ describe('POST /login', () => {
         });
 
         it('updates an existing user', async () => {
-            await mongoConsumer
-                .db()
-                .collection<User>('users')
-                .insertOne({ ...mockedUser, _id: 'test Discord user id' });
+            await testDatabase.db.users.insertOne({ ...mockedUser, _id: 'test /login user id' });
 
-            const res = await request(app).post('/login').send(mockLoginBody);
+            const res = await request(app).post('/login').send(mockedLoginBody);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.type).toBe('login');
 
-            const updatedUser = await mongoConsumer
-                .db()
-                .collection('users')
-                .findOne<User>({ _id: res.body.userData._id });
+            const updatedUser = await testDatabase.db.users.findOne({ _id: res.body.userData._id });
 
             if (updatedUser === null) fail('should have updated a user');
 

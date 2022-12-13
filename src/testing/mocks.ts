@@ -36,3 +36,8 @@ export const mockedUser: User = {
     permissions: UserPermissions.Comment,
     registered: new Date().toISOString(),
 };
+
+export const mockedLoginBody = {
+    code: 'test code',
+    redirect_uri: 'test redirect uri',
+};

@@ -76,5 +76,34 @@ describe('discordHelpers', () => {
 
             expect(mockedAxios.get).toHaveBeenCalledTimes(1);
         });
+
+        it('throws errors on fail', async () => {
+            mockedAxios.get.mockImplementationOnce(() => {
+                throw new Error('test error');
+            });
+
+            try {
+                await getUserInfo('test access token');
+                fail('should have thrown an error');
+            } catch (error) {
+                if (error instanceof Error) {
+                    expect(error.message).toBe('test error');
+                } else fail('should have thrown an Error instance');
+            }
+
+            expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+        });
+
+        it('catches specific Axios errors', async () => {
+            mockedAxios.isAxiosError.mockReturnValueOnce(true);
+            mockedAxios.get.mockImplementationOnce(() => {
+                throw { response: { status: 401 } };
+            });
+
+            const res = await getUserInfo('test access token');
+            expect(res).toBe(null);
+
+            expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+        });
     });
 });

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { createApp } from './app';
+import { createApp } from './createApp';
 import { mockConfig } from '../config';
 
 describe('app', () => {

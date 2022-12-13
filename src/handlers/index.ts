@@ -1,2 +1,23 @@
-export * from './loginProcess';
-export * from './userManagement';
+import { Express } from 'express';
+import { Config } from '../config';
+import { AppDatabaseCollections } from '../types';
+import { makeLoginLink, login, refresh } from './loginProcess';
+import { getMe } from './userManagement';
+import { withScopes } from './withScopes';
+
+export function applyRoutes(app: Express, config: Config, db?: AppDatabaseCollections): void {
+    app.get('/', (_req, res) =>
+        res.status(200).json({
+            startTime: config.startedAt,
+            version: config.version,
+            receivedRequest: new Date().toISOString(),
+        }),
+    );
+
+    // login process
+    app.get('/makeLoginLink', withScopes(makeLoginLink, config, db));
+    app.post('/login', withScopes(login, config, db));
+    app.get('/refresh', withScopes(refresh, config, db));
+
+    app.get('/users/@me', withScopes(getMe, config, db));
+}
