@@ -1,4 +1,5 @@
 import { APIUser, RESTPostOAuth2AccessTokenResult } from 'discord-api-types/v10';
+import { SiteTokenPayload } from '../helpers';
 import { User, UserPermissions } from '../types';
 
 export const mockedOAuthResult: RESTPostOAuth2AccessTokenResult = {
@@ -40,4 +41,10 @@ export const mockedUser: User = {
 export const mockedLoginBody = {
     code: 'test code',
     redirect_uri: 'test redirect uri',
+};
+
+export const mockedSiteTokenPayload: SiteTokenPayload = {
+    id: 'test token user id',
+    access_token: 'test token user access token',
+    refresh_token: 'test token user refresh token',
 };
