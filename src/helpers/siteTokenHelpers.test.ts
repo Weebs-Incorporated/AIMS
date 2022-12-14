@@ -4,10 +4,9 @@ import { mockedOAuthResult } from '../testing';
 import { makeSiteToken, SiteAuthError, SiteTokenPayload, validateSiteToken } from './siteTokenHelpers';
 
 describe('siteTokenHelpers', () => {
+    const config = mockConfig();
     describe('makeSiteToken', () => {
         it('signs the payload correctly', () => {
-            const config = mockConfig({ jwtSecret: 'test secret' });
-
             const token = makeSiteToken(config, mockedOAuthResult, 'test id');
 
             expect(verify(token, config.jwtSecret)).toMatchObject({
@@ -20,7 +19,7 @@ describe('siteTokenHelpers', () => {
     describe('validateSiteToken', () => {
         it('throws if token is missing', () => {
             try {
-                validateSiteToken(mockConfig(), undefined);
+                validateSiteToken(config, undefined);
                 fail('should have thrown an error');
             } catch (error) {
                 if (error instanceof SiteAuthError) {
@@ -32,7 +31,7 @@ describe('siteTokenHelpers', () => {
         it('throws if token is malformed', () => {
             const token = 'garbage token';
             try {
-                validateSiteToken(mockConfig(), token);
+                validateSiteToken(config, token);
                 fail('should have thrown an error');
             } catch (error) {
                 if (error instanceof JsonWebTokenError) {
@@ -42,7 +41,7 @@ describe('siteTokenHelpers', () => {
         });
 
         it('throws if token is signed with a different secret', () => {
-            const token = sign({}, 'some secret');
+            const token = sign({}, config.jwtSecret);
 
             try {
                 validateSiteToken(mockConfig({ jwtSecret: 'another secret' }), token);
@@ -55,8 +54,6 @@ describe('siteTokenHelpers', () => {
         });
 
         it('throws if token payload is not an object', () => {
-            const config = mockConfig();
-
             const tokenString = sign('string payload', config.jwtSecret);
 
             try {
@@ -70,8 +67,6 @@ describe('siteTokenHelpers', () => {
         });
 
         it('throws if token lacks an expiration date', () => {
-            const config = mockConfig();
-
             const tokenString = sign({}, config.jwtSecret);
 
             try {
@@ -85,8 +80,6 @@ describe('siteTokenHelpers', () => {
         });
 
         it('throws if token is expired', () => {
-            const config = mockConfig();
-
             const token = sign({}, config.jwtSecret, { expiresIn: 0 });
 
             try {
@@ -100,8 +93,6 @@ describe('siteTokenHelpers', () => {
         });
 
         it('throws if token payload has bad shape', () => {
-            const config = mockConfig();
-
             // no ID
             const tokenA = sign({}, config.jwtSecret, { expiresIn: 10 });
 
@@ -148,7 +139,6 @@ describe('siteTokenHelpers', () => {
                 refresh_token: 'test refresh token',
             };
 
-            const config = mockConfig();
             const token = sign(testPayload, config.jwtSecret, { expiresIn: 10 });
 
             const res = validateSiteToken(config, token);
@@ -163,7 +153,6 @@ describe('siteTokenHelpers', () => {
                 refresh_token: 'test refresh token',
             };
 
-            const config = mockConfig();
             const token = sign(testPayload, config.jwtSecret, { expiresIn: 10 });
 
             const res = validateSiteToken(config, `bearer ${token}`);
