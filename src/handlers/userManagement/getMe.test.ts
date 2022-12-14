@@ -20,21 +20,6 @@ describe('GET /users/@me', () => {
         await testDatabase.shutdown();
     });
 
-    // it('returns status code 501 if no Mongo database is provided', async () => {
-    //     const req = await request(createApp(config))
-    //         .get('/users/@me')
-    //         .set('Authorization', `Bearer ${mockToken}`)
-    //         .send();
-
-    //     expect(req.statusCode).toBe(501);
-    // });
-
-    // it('returns status code 401 for invalid tokens', async () => {
-    //     const req = await request(createApp(config)).get('/users/@me').set('Authorization', 'garbage token').send();
-
-    //     expect(req.statusCode).toBe(401);
-    // });
-
     it('returns status code 404 when no user is found', async () => {
         const req = await request(app).get('/users/@me').set('Authorization', `Bearer ${mockToken}`).send();
 
