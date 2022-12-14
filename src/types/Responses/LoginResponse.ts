@@ -3,9 +3,6 @@ import { User } from '../User';
 export interface LoginResponse {
     userData: User;
 
-    /** Token to use for extending this user's current session. */
-    refreshToken: string;
-
     /** How long until the current {@link siteToken} expires, in seconds. */
     expiresInSeconds: number;
 

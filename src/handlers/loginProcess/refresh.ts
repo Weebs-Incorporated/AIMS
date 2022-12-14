@@ -46,7 +46,6 @@ export const refresh: EndpointProvider<void, LoginResponse | string> = {
 
             return res.status(200).json({
                 userData: { ...user, ...updatedUser },
-                refreshToken: newAuth.refresh_token,
                 expiresInSeconds: newAuth.expires_in,
                 siteToken: newToken,
                 type: 'refresh',

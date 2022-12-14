@@ -67,7 +67,6 @@ export const login: EndpointProvider<{ code: string; redirect_uri: string }, Log
 
             return res.status(200).json({
                 userData,
-                refreshToken: discordAuth.refresh_token,
                 expiresInSeconds: discordAuth.expires_in,
                 siteToken,
                 type,
