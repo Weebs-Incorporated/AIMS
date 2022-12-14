@@ -90,6 +90,7 @@
                 "description": "Completes the Discord OAuth2 login process, returning a site access token.",
                 "security": [{}, { "rateLimitBypassToken": [] }],
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
