@@ -202,6 +202,25 @@
                 }
             }
         },
+        "/ip": {
+            "get": {
+                "tags": ["Other"],
+                "description": "Returns IP address of client, useful for [configuring proxies](https://www.npmjs.com/package/express-rate-limit#:~:text=Troubleshooting%20Proxy%20Issues).",
+                "responses": {
+                    "200": {
+                        "description": "IP address of client, might be `::1` if viewing from same network.",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "123.123.123.123"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/spec": {
             "get": {
                 "tags": ["Other"],

@@ -8,4 +8,12 @@ describe('app', () => {
 
         expect(response.statusCode).toBe(200);
     });
+
+    describe('GET /ip', () => {
+        it('return IP addresses', async () => {
+            const response = await request(createApp(mockConfig())).get('/ip').send();
+
+            expect(response.text).toBe('::ffff:127.0.0.1');
+        });
+    });
 });

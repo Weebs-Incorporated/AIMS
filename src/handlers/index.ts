@@ -14,6 +14,8 @@ export function applyRoutes(app: Express, config: Config, db?: AppDatabaseCollec
         }),
     );
 
+    app.get('/ip', (req, res) => res.status(200).send(req.ip));
+
     // login process
     app.get('/makeLoginLink', withScopes(makeLoginLink, config, db));
     app.post('/login', withScopes(login, config, db));
