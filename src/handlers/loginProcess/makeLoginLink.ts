@@ -1,7 +1,7 @@
 import { makeAuthorizationLink } from '../../helpers';
-import { EndpointProviderNoScopes } from '../../types';
+import { EndpointProvider } from '../../types';
 
-export const makeLoginLink: EndpointProviderNoScopes<void, string> = {
+export const makeLoginLink: EndpointProvider<void, string> = {
     scopes: 'none',
     applyToRoute: ({ config }) => {
         return (_req, res) =>

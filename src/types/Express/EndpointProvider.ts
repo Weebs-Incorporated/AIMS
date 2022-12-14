@@ -18,12 +18,12 @@ export type EndpointProviderReturnValue<TRequest = unknown, TResponse = unknown>
     ResponseLocals
 >;
 
-export interface EndpointProviderNoScopes<TRequest, TResponse> {
+interface EndpointProviderNoScopes<TRequest, TResponse> {
     scopes: 'none';
     applyToRoute: ({ config }: { config: Config }) => EndpointProviderReturnValue<TRequest, TResponse>;
 }
 
-export interface EndpointProviderDbScope<TRequest, TResponse> {
+interface EndpointProviderDbScope<TRequest, TResponse> {
     scopes: 'db';
     applyToRoute: ({
         config,
@@ -34,7 +34,7 @@ export interface EndpointProviderDbScope<TRequest, TResponse> {
     }) => EndpointProviderReturnValue<TRequest, TResponse>;
 }
 
-export interface EndpointProviderAuthScope<TRequest, TResponse> {
+interface EndpointProviderAuthScope<TRequest, TResponse> {
     scopes: 'auth';
     applyToRoute: ({
         config,

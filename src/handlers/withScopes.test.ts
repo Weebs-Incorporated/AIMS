@@ -4,29 +4,23 @@ import { mockConfig } from '../config';
 import { makeSiteToken } from '../helpers';
 import { authErrorHandler } from '../middleware/authErrorHandler';
 import { mockedOAuthResult } from '../testing';
-import {
-    AppDatabaseCollections,
-    EndpointProviderAuthScope,
-    EndpointProviderBothScopes,
-    EndpointProviderDbScope,
-    EndpointProviderNoScopes,
-} from '../types';
+import { AppDatabaseCollections, EndpointProvider } from '../types';
 import { withScopes } from './withScopes';
 
 describe('withScopes', () => {
     const config = mockConfig();
 
-    const providerNoScopes: EndpointProviderNoScopes<void, void> = {
+    const providerNoScopes: EndpointProvider<void, void> = {
         scopes: 'none',
         applyToRoute: () => (_req, res) => res.sendStatus(200),
     };
 
-    const providerDbScope: EndpointProviderDbScope<void, void> = {
+    const providerDbScope: EndpointProvider<void, void> = {
         scopes: 'db',
         applyToRoute: () => (_req, res) => res.sendStatus(200),
     };
 
-    const providerAuthScope: EndpointProviderAuthScope<void, object> = {
+    const providerAuthScope: EndpointProvider<void, object> = {
         scopes: 'auth',
         applyToRoute:
             ({ auth }) =>
@@ -34,7 +28,7 @@ describe('withScopes', () => {
                 res.status(200).json(auth),
     };
 
-    const providerBothScopes: EndpointProviderBothScopes<void, void> = {
+    const providerBothScopes: EndpointProvider<void, void> = {
         scopes: 'both',
         applyToRoute: () => (_req, res) => res.sendStatus(200),
     };
