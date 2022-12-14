@@ -93,22 +93,6 @@ describe('GET /refresh', () => {
         expect(res1.text).not.toBe(res2.text);
     });
 
-    // it('returns status code 501 if no Mongo database is provided', async () => {
-    //     const req = await request(
-    // createApp(config)).get('/refresh').set('Authorization', `Bearer ${mockToken}`).send();
-
-    //     expect(req.statusCode).toBe(501);
-    // });
-
-    // it('returns status code 401 for invalid tokens', async () => {
-    //     const req = await request(createApp(mockConfig(), mockDb))
-    //         .get('/refresh')
-    //         .set('Authorization', 'garbage token')
-    //         .send();
-
-    //     expect(req.statusCode).toBe(401);
-    // });
-
     describe('user database interactions', () => {
         let response: request.Response;
 
