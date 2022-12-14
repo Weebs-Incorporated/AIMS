@@ -28,6 +28,7 @@ describe('GET /refresh', () => {
 
     mockedValidateSiteToken.mockReturnValue({
         id: '/refresh test user id',
+        access_token: 'test access token',
         refresh_token: 'test refresh token',
     });
 
@@ -139,8 +140,7 @@ describe('GET /refresh', () => {
             expect(updatedUser).toEqual(response.body.userData);
         });
 
-        it('returns a new refresh token, and site token', () => {
-            expect(response.body.refreshToken).toBe(mockedOAuthResultNew.refresh_token);
+        it('returns a new site token', () => {
             expect(response.body.siteToken).toBe('test new site token');
         });
     });

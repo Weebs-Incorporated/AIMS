@@ -1,7 +1,7 @@
 import { JsonWebTokenError, sign, TokenExpiredError, verify } from 'jsonwebtoken';
 import { mockConfig } from '../config';
 import { mockedOAuthResult } from '../testing';
-import { makeSiteToken, SiteAuthError, validateSiteToken } from './siteTokenHelpers';
+import { makeSiteToken, SiteAuthError, SiteTokenPayload, validateSiteToken } from './siteTokenHelpers';
 
 describe('siteTokenHelpers', () => {
     describe('makeSiteToken', () => {
@@ -102,9 +102,16 @@ describe('siteTokenHelpers', () => {
         it('throws if token payload has bad shape', () => {
             const config = mockConfig();
 
-            const tokenA = sign({ refresh_token: 'test refresh token' }, config.jwtSecret, { expiresIn: 10 });
+            // no ID
+            const tokenA = sign({}, config.jwtSecret, { expiresIn: 10 });
 
+            // no access token
             const tokenB = sign({ id: 'test id' }, config.jwtSecret, { expiresIn: 10 });
+
+            // no refresh token
+            const tokenC = sign({ id: 'test id', access_token: 'test access token' }, config.jwtSecret, {
+                expiresIn: 10,
+            });
 
             try {
                 validateSiteToken(config, tokenA);
@@ -120,14 +127,24 @@ describe('siteTokenHelpers', () => {
                 fail('should have thrown an error');
             } catch (error) {
                 if (error instanceof SiteAuthError) {
+                    expect(error.message).toBe('No access_token in payload');
+                } else fail('should have thrown a SiteAuthError');
+            }
+
+            try {
+                validateSiteToken(config, tokenC);
+                fail('should have thrown an error');
+            } catch (error) {
+                if (error instanceof SiteAuthError) {
                     expect(error.message).toBe('No refresh_token in payload');
                 } else fail('should have thrown a SiteAuthError');
             }
         });
 
         it('returns expected object for a valid token', () => {
-            const testPayload = {
+            const testPayload: SiteTokenPayload = {
                 id: 'test id',
+                access_token: 'test access token',
                 refresh_token: 'test refresh token',
             };
 
@@ -140,8 +157,9 @@ describe('siteTokenHelpers', () => {
         });
 
         it('removes leading "bearer " if present', () => {
-            const testPayload = {
+            const testPayload: SiteTokenPayload = {
                 id: 'test id',
+                access_token: 'test access token',
                 refresh_token: 'test refresh token',
             };
 
