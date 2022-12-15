@@ -65,7 +65,7 @@ export interface EndpointProviderBothScopes<TRequest, TResponse, TQueryParams> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type EndpointProvider<TRequest = any, TResponse = any, TQueryParams = object> =
+export type EndpointProvider<TRequest = any, TResponse = any, TQueryParams = any> =
     | EndpointProviderNoScopes<TRequest, TResponse, TQueryParams>
     | EndpointProviderDbScope<TRequest, TResponse, TQueryParams>
     | EndpointProviderAuthScope<TRequest, TResponse, TQueryParams>
