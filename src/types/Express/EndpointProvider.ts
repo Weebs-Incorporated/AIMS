@@ -18,7 +18,13 @@ export type EndpointProviderReturnValue<
 
 interface EndpointProviderNoScopes<TRequest, TResponse, TQueryParams> {
     scopes: 'none';
-    applyToRoute: ({ config }: { config: Config }) => EndpointProviderReturnValue<TRequest, TResponse, TQueryParams>;
+    applyToRoute: ({
+        config,
+        auth,
+    }: {
+        config: Config;
+        auth: SiteTokenPayload | null;
+    }) => EndpointProviderReturnValue<TRequest, TResponse, TQueryParams>;
 }
 
 interface EndpointProviderDbScope<TRequest, TResponse, TQueryParams> {
@@ -26,9 +32,11 @@ interface EndpointProviderDbScope<TRequest, TResponse, TQueryParams> {
     applyToRoute: ({
         config,
         db,
+        auth,
     }: {
         config: Config;
         db: AppDatabaseCollections;
+        auth: SiteTokenPayload | null;
     }) => EndpointProviderReturnValue<TRequest, TResponse, TQueryParams>;
 }
 

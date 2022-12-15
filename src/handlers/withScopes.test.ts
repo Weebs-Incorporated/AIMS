@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { Request } from 'express';
 import request from 'supertest';
 import { mockConfig } from '../config';
-import { makeSiteToken } from '../helpers';
+import { makeSiteToken, SiteTokenPayload } from '../helpers';
 import { authErrorHandler } from '../middleware/authErrorHandler';
 import { mockedOAuthResult } from '../testing';
 import { AppDatabaseCollections, EndpointProvider } from '../types';
-import { withScopes } from './withScopes';
+import { withOptionalAuth, withScopes } from './withScopes';
 
 describe('withScopes', () => {
     const config = mockConfig();
@@ -131,5 +131,31 @@ describe('withScopes', () => {
 
             expect(res.statusCode).toBe(200);
         });
+    });
+});
+
+describe('withOptionalAuth', () => {
+    const config = mockConfig();
+
+    it('returns null when authorization is omitted', () => {
+        expect(withOptionalAuth(config, { get: () => undefined } as unknown as Request)).toBe(null);
+    });
+
+    it('returns token payload when authorization is valid', () => {
+        const mockAuth = makeSiteToken(config, mockedOAuthResult, 'withScopes test user id');
+
+        const expected: SiteTokenPayload = {
+            id: 'withScopes test user id',
+            access_token: mockedOAuthResult.access_token,
+            refresh_token: mockedOAuthResult.refresh_token,
+        };
+
+        expect(withOptionalAuth(config, { get: () => mockAuth } as unknown as Request)).toEqual(expected);
+    });
+
+    it('throws an error when authorization is invalid', () => {
+        const mockAuth = 'Bearer blah blah blah';
+
+        expect(() => withOptionalAuth(config, { get: () => mockAuth } as unknown as Request)).toThrowError();
     });
 });
