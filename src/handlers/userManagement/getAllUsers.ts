@@ -30,11 +30,10 @@ export const getAllUsers: EndpointProvider<GetAllUsersRequest, GetAllUsersRespon
 
             const filter: Filter<User> = withIds ? { _id: { $in: withIds } } : {};
 
-            const numUsers = await db.users.countDocuments(filter);
-
-            const users = await db.users
-                .find<ClientFacingUser>(filter, { skip: page * perPage, limit: perPage })
-                .toArray();
+            const [numUsers, users] = await Promise.all([
+                db.users.countDocuments(filter),
+                db.users.find<ClientFacingUser>(filter, { skip: page * perPage, limit: perPage }).toArray(),
+            ]);
 
             if (hideIps) {
                 users.forEach((e) => (e.latestIp = null));
