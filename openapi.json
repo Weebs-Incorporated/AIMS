@@ -254,8 +254,80 @@
                             }
                         }
                     },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated401"
+                    },
                     "404": {
                         "description": "A user with this ID does not exist in the database."
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimited429"
+                    }
+                }
+            }
+        },
+        "/users/all": {
+            "post": {
+                "tags": ["User Management"],
+                "description": "Gets a list of users.",
+                "security": [
+                    {},
+                    { "rateLimitBypassToken": [] },
+                    { "siteToken": [] },
+                    { "rateLimitBypassToken": [], "siteToken": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": ["pagination", "withIds"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "pagination": {
+                                        "$ref": "#/components/schemas/PaginationInput"
+                                    },
+                                    "withIds": {
+                                        "type": "array",
+                                        "nullable": true,
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Select user IDs to get.",
+                                        "example": null,
+                                        "minItems": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User info.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["users", "pagination"],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/components/schemas/PaginationResponse"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated401"
                     },
                     "429": {
                         "$ref": "#/components/responses/RateLimited429"
@@ -365,6 +437,37 @@
                         "minimum": 0
                     }
                 }
+            },
+            "PaginationInput": {
+                "type": "object",
+                "required": ["page", "perPage"],
+                "additionalProperties": false,
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "default": 0,
+                        "description": "Page number, starts at 0."
+                    },
+                    "perPage": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "Number of items to show per page."
+                    }
+                }
+            },
+            "PaginationResponse": {
+                "type": "object",
+                "required": ["itemCount"],
+                "additionalProperties": false,
+                "properties": {
+                    "itemCount": {
+                        "type": "integer",
+                        "description": "Number of items in total."
+                    }
+                }
             }
         },
         "responses": {
@@ -433,7 +536,7 @@
                 }
             },
             "Unauthenticated401": {
-                "description": "Invalid or missing bearer token in `Authorization` header.",
+                "description": "Invalid bearer token in `Authorization` header.\nIf authorization header is omitted, this will only be sent if the endpoint in question requires authentication.",
                 "content": {
                     "application/json": {
                         "schema": {
