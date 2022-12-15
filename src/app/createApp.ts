@@ -1,6 +1,7 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
-import apiSpec from '../../openapi.json';
+import { join } from 'path';
+import apiSpec from '../openapi.json';
 import { Config } from '../config';
 import { applyRoutes } from '../handlers';
 import { applyPostRouteMiddleware, applyPreRouteMiddleware } from '../middleware';
@@ -12,7 +13,7 @@ export function createApp(config: Config, db?: AppDatabaseCollections) {
     app.set('trust proxy', config.numProxies);
 
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, { customSiteTitle: 'AIMS API' }));
-    app.use('/spec', express.static('openapi.json'));
+    app.use('/spec', express.static(join(__dirname, '../', 'openapi.json')));
     app.use('/static', express.static('static', { extensions: ['html'] }));
     app.use('/favicon.ico', express.static('static/favicon.ico'));
 
