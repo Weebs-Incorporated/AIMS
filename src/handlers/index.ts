@@ -3,6 +3,7 @@ import { Config } from '../config';
 import { AppDatabaseCollections } from '../types';
 import { makeLoginLink, login, refresh, logout } from './loginProcess';
 import { getMe } from './userManagement';
+import { getUserById } from './userManagement/getUserById';
 import { withScopes } from './withScopes';
 
 export function applyRoutes(app: Express, config: Config, db?: AppDatabaseCollections): void {
@@ -23,4 +24,5 @@ export function applyRoutes(app: Express, config: Config, db?: AppDatabaseCollec
     app.get('/logout', withScopes(logout, config, db));
 
     app.get('/users/@me', withScopes(getMe, config, db));
+    app.get('/users/:id', withScopes(getUserById, config, db));
 }

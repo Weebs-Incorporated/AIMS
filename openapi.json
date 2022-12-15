@@ -223,6 +223,46 @@
                 }
             }
         },
+        "/users/{id}": {
+            "get": {
+                "tags": ["User Management"],
+                "description": "Gets information about a user.",
+                "security": [
+                    {},
+                    { "rateLimitBypassToken": [] },
+                    { "siteToken": [] },
+                    { "rateLimitBypassToken": [], "siteToken": [] }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User info.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "A user with this ID does not exist in the database."
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimited429"
+                    }
+                }
+            }
+        },
         "/ip": {
             "get": {
                 "tags": ["Other"],
