@@ -264,6 +264,65 @@
                         "$ref": "#/components/responses/RateLimited429"
                     }
                 }
+            },
+            "patch": {
+                "tags": ["User Management"],
+                "description": "Modifies user permissions.",
+                "security": [{ "siteToken": [] }, { "rateLimitBypassToken": [], "siteToken": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": ["newPermissions"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "newPermissions": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 31,
+                                        "description": "Permissions bitfield, see [UserPermissions.ts](https://github.com/Weebs-Incorporated/AIMS/blob/4e65c97ff201bfa3fdc216df4c59f2f5b0187716/src/types/User/UserPermissions.ts) for more info."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permissions successfully updated."
+                    },
+                    "204": {
+                        "description": "User permissions were already this."
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated401"
+                    },
+                    "403": {
+                        "description": "Requester lacks permission to do this",
+                        "content": {
+                            "text/html": {
+                                "example": "Cannot remove the assign permission from yourself."
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "A user with this ID does not exist in the database"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimited429"
+                    }
+                }
             }
         },
         "/users/all": {
@@ -536,7 +595,7 @@
                 }
             },
             "Unauthenticated401": {
-                "description": "Invalid bearer token in `Authorization` header.\nIf authorization header is omitted, this will only be sent if the endpoint in question requires authentication.",
+                "description": "Invalid bearer token in `Authorization` header.\nIf authorization header is omitted, this will only be sent when the endpoint in question requires authentication.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -544,7 +603,8 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "Jwt malformed"
+                                    "example": "Jwt malformed",
+                                    "description": "Basic error message, note that none of these messages end in a '.', unlike all other messages returned."
                                 }
                             }
                         }
