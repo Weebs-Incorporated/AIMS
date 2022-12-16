@@ -1,11 +1,11 @@
 export enum UserPermissions {
     None = 0,
 
-    /** Change permissions of themselves and others.
+    /**
+     * Change permissions of themselves and others.
      *
      * - Cannot remove this permission from themselves.
      * - Cannot modify permissions of other users who have this permission.
-     *
      */
     AssignPermissions = 1 << 0,
 
