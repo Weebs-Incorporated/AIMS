@@ -18,7 +18,7 @@
         "lint": "eslint --ext .ts src --max-warnings=0",
         "typecheck": "tsc -p tsconfig.build.json --noEmit",
         "test": "jest",
-        "check-all": "yarn lint && yarn typecheck && yarn test"
+        "check-all": "pnpm lint && pnpm typecheck && pnpm test"
     },
     "dependencies": {
         "axios": "^1.2.0",
