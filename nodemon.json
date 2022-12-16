@@ -1,5 +1,5 @@
 {
-    "watch": ["src", "config.json", "openapi.json"],
-    "ext": "ts",
-    "ignore": ["**/*.test.ts"]
+    "watch": ["src", "config.json"],
+    "ext": "ts,json",
+    "ignore": ["**/*.test.ts", "**/testing/**"]
 }
