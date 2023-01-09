@@ -42,7 +42,7 @@ describe('PATCH /users/:id', () => {
         await testDatabase.shutdown();
     });
 
-    afterEach(async () => {
+    beforeEach(async () => {
         await Promise.all([
             testDatabase.db.users.updateOne({ _id: 'normal' }, { $set: { permissions: UserPermissions.Comment } }),
             testDatabase.db.users.updateOne(

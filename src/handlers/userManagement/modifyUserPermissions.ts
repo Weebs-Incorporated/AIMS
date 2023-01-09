@@ -1,9 +1,9 @@
 import { hasPermission } from '../../helpers/userPermissionHelpers';
 import { EndpointProvider, UserPermissions } from '../../types';
 
-export interface ModifyUserPermissionsRequest {
+export type ModifyUserPermissionsRequest = {
     newPermissions: UserPermissions;
-}
+};
 
 export type ModifyUserPermissionsResponse =
     | {
@@ -67,7 +67,7 @@ export const modifyUserPermissions: EndpointProvider<
 
             // at this stage, we know the requester has AssignPermissions but not Owner
 
-            // no matter who they target, that cannot give out the owner permission
+            // no matter who they target, they cannot give out the owner permission
             if (hasPermission(newPermissions, UserPermissions.Owner)) {
                 return res.status(403).send('Cannot give out the owner permission.');
             }
