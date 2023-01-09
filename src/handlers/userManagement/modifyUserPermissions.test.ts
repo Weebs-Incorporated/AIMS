@@ -29,13 +29,7 @@ describe('PATCH /users/:id', () => {
         testDatabase = await createTestDatabase();
         app = createApp(config, testDatabase.db);
 
-        await testDatabase.db.users.insertMany([
-            users.normal,
-            users.assigner,
-            users.assigner2,
-            users.owner,
-            users.owner2,
-        ]);
+        await testDatabase.db.users.insertMany(Object.values(users));
     });
 
     afterAll(async () => {
