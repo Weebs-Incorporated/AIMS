@@ -6,5 +6,6 @@ export interface PaginationInput {
 }
 
 export interface PaginationResponse {
+    /** Number of items in total. */
     itemCount: number;
 }
