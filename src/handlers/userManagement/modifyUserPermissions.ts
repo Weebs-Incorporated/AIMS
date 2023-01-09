@@ -55,7 +55,7 @@ export const modifyUserPermissions: EndpointProvider<
 
                 if (targetUser.permissions === newPermissions) return res.sendStatus(204);
 
-                db.users.updateOne({ _id: targetUser._id }, { $set: { permissions: newPermissions } });
+                await db.users.updateOne({ _id: targetUser._id }, { $set: { permissions: newPermissions } });
                 return res.sendStatus(200);
             }
 
@@ -103,7 +103,7 @@ export const modifyUserPermissions: EndpointProvider<
             // all authorization checks have passed
             if (targetUser.permissions === newPermissions) return res.sendStatus(204);
 
-            db.users.updateOne({ _id: targetUser._id }, { $set: { permissions: newPermissions } });
+            await db.users.updateOne({ _id: targetUser._id }, { $set: { permissions: newPermissions } });
 
             return res.sendStatus(200);
         };
