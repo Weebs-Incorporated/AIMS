@@ -2,11 +2,13 @@ import { RequestHandler } from 'express';
 import { Collection } from 'mongodb';
 import { Config } from '../../config';
 import { SiteTokenPayload } from '../../helpers';
+import { Post, PostStatus } from '../Post';
 import { User } from '../User';
 import { ResponseLocals } from './ResponseLocals';
 
 export interface AppDatabaseCollections {
     users: Collection<User>;
+    posts: { [K in PostStatus]: Collection<Post<K>> };
 }
 
 /** Endpoint handler with typed request body and response types. */
