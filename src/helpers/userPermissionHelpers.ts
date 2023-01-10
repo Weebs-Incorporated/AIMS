@@ -1,9 +1,9 @@
 import { ClientFacingUser, User, UserPermissions } from '../types';
 
 /**
- * Checks the provided set of permissions includes the target one.
+ * Checks the provided set of permissions includes the target one(s).
  * @param {User | ClientFacingUser | UserPermissions} permissionSet Object to check permissions of.
- * @param {UserPermissions} targetPermissions Permissions that are required.
+ * @param {UserPermissions} targetPermissions Permissions that are all required.
  *
  * To check multiple permissions, simply bitwise OR them.
  *
@@ -26,4 +26,21 @@ export function hasPermission(
         return (permissionSet & targetPermissions) === targetPermissions;
     }
     return (permissionSet.permissions & targetPermissions) === targetPermissions;
+}
+
+/**
+ * Checks the provided set of permissions includes any of the target ones.
+ * @param {User | ClientFacingUser | UserPermissions} permissionSet Object to check permissions of.
+ * @param {UserPermissions[]} targetPermissions Permissions that are required.
+ *
+ * To check multiple permissions, simply bitwise OR them.
+ */
+export function hasOneOfPermissions(
+    permissionSet: User | ClientFacingUser | UserPermissions,
+    ...targetPermissions: UserPermissions[]
+): boolean {
+    for (const permission of targetPermissions) {
+        if (hasPermission(permissionSet, permission)) return true;
+    }
+    return false;
 }
