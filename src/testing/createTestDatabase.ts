@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { AppDatabaseCollections } from '../types';
+import { PostStatus } from '../types/Post';
 
 export interface TestDatabase {
     provider: MongoMemoryServer;
@@ -18,8 +19,15 @@ export async function createTestDatabase(): Promise<TestDatabase> {
     const consumer = new MongoClient(uri);
     await consumer.connect();
 
+    const _db = consumer.db();
+
     const db: AppDatabaseCollections = {
-        users: consumer.db().collection('users'),
+        users: _db.collection('users'),
+        posts: {
+            [PostStatus.InitialAwaitingValidation]: _db.collection('posts_submissions'),
+            [PostStatus.Public]: _db.collection('posts_public'),
+            [PostStatus.ReAwaitingValidation]: _db.collection('posts_withdrawn'),
+        },
     };
 
     return {
