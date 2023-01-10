@@ -394,10 +394,10 @@
                 }
             }
         },
-        "/posts": {
+        "/submissions": {
             "post": {
                 "tags": ["Post Management"],
-                "description": "Creates a new post.",
+                "description": "Creates a new post submission.",
                 "security": [{ "siteToken": [] }, { "rateLimitBypassToken": [], "siteToken": [] }],
                 "requestBody": {
                     "required": true,
