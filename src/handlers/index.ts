@@ -24,7 +24,7 @@ export function applyRoutes(app: Express, config: Config, db?: AppDatabaseCollec
     app.get('/logout', withScopes(logout, config, db));
 
     // post process
-    app.post('/posts', withScopes(makePost, config, db));
+    app.post('/submissions', withScopes(makePost, config, db));
 
     // user management
     app.get('/users/@me', withScopes(getMe, config, db));
