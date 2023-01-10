@@ -1,4 +1,4 @@
-import { hasPermission } from '../../helpers/userPermissionHelpers';
+import { hasPermission } from '../../helpers';
 import { EndpointProvider, UserPermissions } from '../../types';
 
 export type ModifyUserPermissionsRequest = {

@@ -1,4 +1,4 @@
-import { hasPermission } from '../../helpers/userPermissionHelpers';
+import { hasPermission } from '../../helpers';
 import { ClientFacingUser, EndpointProvider, UserPermissions } from '../../types';
 
 export const getUserById: EndpointProvider<void, ClientFacingUser, { id: string }> = {

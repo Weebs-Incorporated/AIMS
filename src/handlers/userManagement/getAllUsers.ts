@@ -1,5 +1,5 @@
 import { Filter } from 'mongodb';
-import { hasPermission } from '../../helpers/userPermissionHelpers';
+import { hasPermission } from '../../helpers';
 import { ClientFacingUser, EndpointProvider, User, UserPermissions } from '../../types';
 import { PaginationInput, PaginationResponse } from '../../types/Pagination';
 
