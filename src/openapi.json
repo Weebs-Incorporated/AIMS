@@ -394,6 +394,54 @@
                 }
             }
         },
+        "/posts": {
+            "post": {
+                "tags": ["Post Management"],
+                "description": "Creates a new post.",
+                "security": [{ "siteToken": [] }, { "rateLimitBypassToken": [], "siteToken": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [{ "$ref": "#/components/schemas/PostProperties" }],
+                                "required": ["url"],
+                                "properties": {
+                                    "status": {
+                                        "minimum": 0,
+                                        "maximum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Post created successfully."
+                    },
+                    "400": {
+                        "description": "Something went wrong trying to fetch the image with the URL provided.",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated401"
+                    },
+                    "409": {
+                        "description": "Post with this file name already exists."
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/RateLimited429"
+                    }
+                }
+            }
+        },
         "/ip": {
             "get": {
                 "tags": ["Other"],
@@ -439,6 +487,220 @@
     },
     "components": {
         "schemas": {
+            "PostAttributes.ArtStyle": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2
+            },
+            "PostAttributes.Colours": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+            },
+            "PostAttributes.ExplicitLevel": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2
+            },
+            "PostAttributes.HairLengths": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+            },
+            "PostAttributes.LightLevel": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2
+            },
+            "PostAttributes.Outfits": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 512
+            },
+            "PostAttributes.Races": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1024
+            },
+            "PostAttributes.ShotType": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3
+            },
+            "PostAttributes.Source": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+            },
+            "PostAttributes.Themes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+            },
+            "PostStatus": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2,
+                "description": "Status of this post.<br />0: InitialAwaitingValidation - Default status for newly uploaded posts, here they must be checked by a user with the `Audit` permission before going public.<br />1: Public - Visible to all.<br />2: ReAwaitingValidation - Withdrawn manually due to an issue, posts with this state should be eventually made public again, or deleted."
+            },
+            "PostSourceValue": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["post", "account"],
+                "properties": {
+                    "post": {
+                        "type": "string"
+                    },
+                    "account": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PostProperties": {
+                "description": "Represents data about an image uploaded to the site.<br />For full documentation on all values, see the [source code](https://github.com/Weebs-Incorporated/AIMS/blob/main/src/types/Post/Post.ts).",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "description": "Normally the uploaded file name."
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "metaData": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["uploaded", "modified", "uploader", "modifier"],
+                        "properties": {
+                            "uploaded": {
+                                "$ref": "#/components/schemas/ISOString"
+                            },
+                            "modified": {
+                                "$ref": "#/components/schemas/ISOString"
+                            },
+                            "uploader": {
+                                "type": "string",
+                                "description": "Uploader user ID."
+                            },
+                            "modifier": {
+                                "type": "string",
+                                "description": "Modifier user ID.",
+                                "nullable": true
+                            }
+                        }
+                    },
+                    "dimensions": {
+                        "description": "Values are in pixels.",
+                        "additionalProperties": false,
+                        "required": ["width", "height"],
+                        "properties": {
+                            "width": {
+                                "type": "integer",
+                                "minimum": 1
+                            },
+                            "height": {
+                                "type": "integer",
+                                "minimum": 1
+                            }
+                        }
+                    },
+                    "size": {
+                        "type": "integer",
+                        "description": "Size in bytes.",
+                        "minimum": 1
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PostStatus"
+                    },
+                    "sources": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "0": {
+                                "$ref": "#/components/schemas/PostSourceValue"
+                            },
+                            "1": {
+                                "$ref": "#/components/schemas/PostSourceValue"
+                            }
+                        }
+                    },
+                    "accompanyingImages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "universe": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "artistName": {
+                        "type": "string"
+                    },
+                    "characters": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "artStyle": {
+                        "$ref": "#/components/schemas/PostAttributes.ArtStyle"
+                    },
+                    "explicitLevel": {
+                        "$ref": "#/components/schemas/PostAttributes.ExplicitLevel"
+                    },
+                    "hairLengths": {
+                        "$ref": "#/components/schemas/PostAttributes.HairLengths"
+                    },
+                    "lightLevel": {
+                        "$ref": "#/components/schemas/PostAttributes.LightLevel"
+                    },
+                    "outfits": {
+                        "$ref": "#/components/schemas/PostAttributes.Outfits"
+                    },
+                    "races": {
+                        "$ref": "#/components/schemas/PostAttributes.Races"
+                    },
+                    "shotType": {
+                        "$ref": "#/components/schemas/PostAttributes.ShotType"
+                    },
+                    "themes": {
+                        "$ref": "#/components/schemas/PostAttributes.Themes"
+                    },
+                    "hairColours": {
+                        "$ref": "#/components/schemas/PostAttributes.Colours"
+                    },
+                    "eyeColours": {
+                        "$ref": "#/components/schemas/PostAttributes.Colours"
+                    }
+                }
+            },
+            "FullPost": {
+                "allOf": [{ "$ref": "#/components/schemas/PostProperties" }],
+                "required": [
+                    "_id",
+                    "url",
+                    "metaData",
+                    "dimensions",
+                    "size",
+                    "status",
+                    "sources",
+                    "accompanyingImages",
+                    "artistName",
+                    "characters",
+                    "artStyle",
+                    "explicitLevel",
+                    "hairLengths",
+                    "lightLevel",
+                    "outfits",
+                    "races",
+                    "shotType",
+                    "themes",
+                    "hairColours",
+                    "eyeColours"
+                ]
+            },
             "ISOString": {
                 "type": "string",
                 "example": "2022-11-08T02:20:08.190Z"
@@ -636,11 +898,15 @@
     "tags": [
         {
             "name": "Login Process",
-            "description": "Operations for logging into the site via Discord, logging out, and refreshing."
+            "description": "Logging into the site via Discord, logging out, and refreshing."
         },
         {
             "name": "User Management",
-            "description": "Operations for managing the current user, or other users."
+            "description": "Managing the current user, or other users."
+        },
+        {
+            "name": "Post Management",
+            "description": "Mangaging posts."
         },
         {
             "name": "Other",

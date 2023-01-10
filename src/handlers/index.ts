@@ -2,6 +2,7 @@ import { Express } from 'express';
 import { Config } from '../config';
 import { AppDatabaseCollections } from '../types';
 import { makeLoginLink, login, refresh, logout } from './loginProcess';
+import { makePost } from './postProcess';
 import { getAllUsers, getMe, getUserById, modifyUserPermissions } from './userManagement';
 import { withScopes } from './withScopes';
 
@@ -22,6 +23,10 @@ export function applyRoutes(app: Express, config: Config, db?: AppDatabaseCollec
     app.get('/refresh', withScopes(refresh, config, db));
     app.get('/logout', withScopes(logout, config, db));
 
+    // post process
+    app.post('/posts', withScopes(makePost, config, db));
+
+    // user management
     app.get('/users/@me', withScopes(getMe, config, db));
     app.get('/users/:id', withScopes(getUserById, config, db));
     app.patch('/users/:id', withScopes(modifyUserPermissions, config, db));
