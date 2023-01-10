@@ -10,10 +10,13 @@ import {
     Themes,
     Colours,
 } from './Attributes';
+import { PostStatus } from './PostStatus';
 
-export interface Post {
+export interface Post<T extends PostStatus> {
     /** Normally the uploaded file name. */
-    id: string;
+    _id: string;
+
+    url: string;
 
     metaData: {
         /** Uploaded at ISO string. */
@@ -32,8 +35,13 @@ export interface Post {
         height: number;
     };
 
-    /** Links to this post and it's uploader. */
-    sources: { [k in Source]: { post: string; account: string } };
+    /** Size in bytes. */
+    size: number;
+
+    status: T;
+
+    /** Links to this post this image is in and it's author. */
+    sources: { [k in Source]?: { post: string; account: string } };
 
     /** Array of post ID's that were uploaded with this image. */
     accompanyingImages: string[];
@@ -43,11 +51,11 @@ export interface Post {
      *
      * Normally this will be the name of a series or game.
      *
-     * @example "arknights", "konosuba", "re:zero", "overwatch"
-     *
      * Can be `undefined` if unknown (should never permanently be this however).
      *
      * Can be `null` if the universe is an original.
+     *
+     * @example "arknights", "konosuba", "re:zero", "overwatch"
      */
     universe: string | null | undefined;
 
@@ -61,19 +69,19 @@ export interface Post {
 
     explicitLevel: ExplicitLevel;
 
-    hairLengths: HairLengths | null;
+    hairLengths: HairLengths;
 
     lightLevel: LightLevel;
 
-    outfits: Outfits | null;
+    outfits: Outfits;
 
-    races: Races | null;
+    races: Races;
 
     shotType: ShotType;
 
     themes: Themes;
 
-    hairColours: Colours | null;
+    hairColours: Colours;
 
-    eyeColours: Colours | null;
+    eyeColours: Colours;
 }
