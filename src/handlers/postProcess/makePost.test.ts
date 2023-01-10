@@ -43,7 +43,7 @@ describe('POST /posts', () => {
     it("returns status code 401 when the requester's account is not found", async () => {
         const goneToken = makeSiteToken(config, mockedOAuthResult, 'deleted');
 
-        const res = await request(app).post('/posts').set('Authorization', `Bearer ${goneToken}`).send({
+        const res = await request(app).post('/submissions').set('Authorization', `Bearer ${goneToken}`).send({
             url: '',
         });
 
@@ -54,7 +54,7 @@ describe('POST /posts', () => {
     });
 
     it("doesn't allow normal users to upload", async () => {
-        const res = await request(app).post('/posts').set('Authorization', `Bearer ${tokens.normal}`).send({
+        const res = await request(app).post('/submissions').set('Authorization', `Bearer ${tokens.normal}`).send({
             url: '',
         });
 
@@ -66,7 +66,7 @@ describe('POST /posts', () => {
             _id: 'somepost',
         } as Post<PostStatus.InitialAwaitingValidation>);
 
-        const res = await request(app).post('/posts').set('Authorization', `Bearer ${tokens.uploader}`).send({
+        const res = await request(app).post('/submissions').set('Authorization', `Bearer ${tokens.uploader}`).send({
             url: 'foo/bar/somePost.png',
         });
 
@@ -74,7 +74,7 @@ describe('POST /posts', () => {
     });
 
     it('creates a submission with default values', async () => {
-        const res = await request(app).post('/posts').set('Authorization', `Bearer ${tokens.uploader}`).send({
+        const res = await request(app).post('/submissions').set('Authorization', `Bearer ${tokens.uploader}`).send({
             url: 'foo/bar/someImage.jpeg',
         });
 
@@ -102,7 +102,7 @@ describe('POST /posts', () => {
             },
         };
         const res = await request(app)
-            .post('/posts')
+            .post('/submissions')
             .set('Authorization', `Bearer ${tokens.uploader}`)
             .send({ url: 'someImage.jpeg', ...partials });
 
